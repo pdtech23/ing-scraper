@@ -3,6 +3,8 @@ package scrapper.ing.userInterface;
 import org.json.JSONException;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 public class TerminalUserInterfaceTest {
@@ -20,7 +22,7 @@ public class TerminalUserInterfaceTest {
     }
 
     @Test
-    public void shouldBeDoneAfterInteractingWithUser() throws JSONException {
+    public void shouldBeDoneAfterInteractingWithUser() throws JSONException, IOException {
         // given
         ConsoleUserInterface userInterface = new ConsoleUserInterface();
         userInterface.interactWithUser();
