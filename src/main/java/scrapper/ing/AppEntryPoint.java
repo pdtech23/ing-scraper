@@ -1,19 +1,20 @@
 package scrapper.ing;
 
-import org.json.JSONException;
-import scrapper.ing.userInterface.ConsoleUserInterface;
-
-import java.io.IOException;
+import scrapper.ing.client.ConnectionProxyService;
+import scrapper.ing.client.response.ResponseDataExtractor;
+import scrapper.ing.user.experience.ConsoleUserInterface;
 
 public class AppEntryPoint {
 
-    public static void main(String[] args) throws JSONException, IOException {
+    public static void main(String[] args) {
 
         ConsoleUserInterface ui = new ConsoleUserInterface();
+        ResponseDataExtractor extractor = new ResponseDataExtractor();
+        ConnectionProxyService dataProvider = new ConnectionProxyService(extractor);
 
-        while (ui.isNotDone()) {
-            ui.interactWithUser();
-        }
+        AccountDataExtractionService scrapper = new AccountDataExtractionService(ui, dataProvider);
+
+        scrapper.downloadAccountDataWithUserInteraction();
     }
 
 }

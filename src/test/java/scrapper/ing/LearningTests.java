@@ -8,6 +8,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -61,6 +62,7 @@ public class LearningTests {
         assertEquals("OK", jsonResult.get("status"));
     }
 
+    @Ignore
     @Test
     public void shouldLoginWithProperCredentials() throws JSONException {
         JSONObject jsonResult = null;
