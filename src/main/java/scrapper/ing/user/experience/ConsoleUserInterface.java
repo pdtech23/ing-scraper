@@ -44,7 +44,7 @@ public class ConsoleUserInterface {
 
             try {
                 passphrase[i] = this.userInputReader.readLine().charAt(0);
-            } catch (IOException e) {
+            } catch (IOException | StringIndexOutOfBoundsException e) {
                 e.printStackTrace();
                 return new char[0];
             }
