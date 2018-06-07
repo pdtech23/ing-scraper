@@ -86,10 +86,14 @@ public class ResponseDataExtractor {
     public List<IngAccountInfo> extractAccountsInfo(Response response) {
         try {
             JSONObject jsonBody = response.getJsonBody();
-            if (!jsonBody.has(DATA_FIELD_KEY) || !jsonBody.has(SAV_FIELD_KEY) || !jsonBody.has(CUR_FIELD_KEY)) {
+            if (!jsonBody.has(DATA_FIELD_KEY)) {
                 return Collections.emptyList();
             }
             JSONObject accounts = jsonBody.getJSONObject(DATA_FIELD_KEY);
+            if (!accounts.has(SAV_FIELD_KEY) || !accounts.has(CUR_FIELD_KEY)) {
+                return Collections.emptyList();
+            }
+
             JSONArray savingAccounts = accounts.getJSONArray(SAV_FIELD_KEY);
             JSONArray currentAccounts = accounts.getJSONArray(CUR_FIELD_KEY);
 
@@ -104,7 +108,7 @@ public class ResponseDataExtractor {
         }
     }
 
-    private void addAccounts(List<IngAccountInfo> result, JSONArray savingAccounts) throws JSONException {
+    private void addAccounts(List<IngAccountInfo> aggregator, JSONArray savingAccounts) throws JSONException {
         for (int i = 0; i < savingAccounts.length(); i++) {
             JSONObject current = savingAccounts.getJSONObject(i);
 
@@ -115,7 +119,7 @@ public class ResponseDataExtractor {
 
             IngAccountInfo account = new IngAccountInfo(current.getString(ACCOUNT_KEY), new Money(current.getDouble
                     (AVAILABLE_BALANCE_KEY), current.getString(CURRENCY_KEY)), current.getString(NAME_KEY));
-            result.add(account);
+            aggregator.add(account);
         }
     }
 }
