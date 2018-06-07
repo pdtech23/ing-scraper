@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotSame;
 
 public class ConnectionProxyTest {
 
-    private final ConnectionProxyService testedService = new ConnectionProxyService(new ResponseDataExtractor());
+    private final DataDownloaderService testedService = new DataDownloaderService(new ResponseDataExtractor());
 
     @Test
     public void shouldProceedOnAnyLogin() {

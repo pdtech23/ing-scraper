@@ -22,14 +22,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ConnectionProxyService {
+public class DataDownloaderService {
     private static final String ING_REST_ENDPOINT_URI = "https://login.ingbank.pl/mojeing/rest";
     private static final String GET_ALL_ACCOUNTS_URI = ING_REST_ENDPOINT_URI + "/rengetallaccounts";
     private static final String LOGIN_URI = ING_REST_ENDPOINT_URI + "/renlogin";
 
     private ResponseDataExtractor responseDataExtractor;
 
-    public ConnectionProxyService(ResponseDataExtractor responseDataExtractor) {
+    public DataDownloaderService(ResponseDataExtractor responseDataExtractor) {
         this.responseDataExtractor = responseDataExtractor;
     }
 
@@ -40,7 +40,7 @@ public class ConnectionProxyService {
 
         ResponseData responseData = this.executeJsonRequest(httpPost, json);
 
-        if (responseData == null) {
+        if (responseData == ResponseData.EMPTY_RESPONSE) {
             return PasswordMetadata.EMPTY;
         }
 
@@ -58,7 +58,7 @@ public class ConnectionProxyService {
 
         ResponseData responseResult = this.executeJsonRequest(httpPost, json);
 
-        if (responseResult == null) {
+        if (responseResult == ResponseData.EMPTY_RESPONSE) {
             return SessionData.EMPTY;
         }
 
@@ -75,13 +75,13 @@ public class ConnectionProxyService {
         httpPost.setHeader("X-Wolf-Protection", "0.7616067842109708");
 
         String json = "{\"token\":\"" + sessionData.getToken() + "\",\"trace\":\"\",\"locale\":\"PL\"}";
-        ResponseData result = this.executeJsonRequest(httpPost, json);
+        ResponseData response = this.executeJsonRequest(httpPost, json);
 
-        if (result == null) {
+        if (response == ResponseData.EMPTY_RESPONSE) {
             return Collections.emptyList();
         }
 
-        return this.responseDataExtractor.extractAccountsInfo(result);
+        return this.responseDataExtractor.extractAccountsInfo(response);
 
     }
 
@@ -95,7 +95,7 @@ public class ConnectionProxyService {
             return new ResponseData(this.extractResponseJson(response), response.getAllHeaders());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            return null;
+            return ResponseData.EMPTY_RESPONSE;
         }
     }
 

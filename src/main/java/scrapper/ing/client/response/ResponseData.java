@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 public class ResponseData {
 
+    public static final ResponseData EMPTY_RESPONSE = new ResponseData(new JSONObject(), new Header[0]);
 
     private final JSONObject jsonBody;
     private final Header[] headers;

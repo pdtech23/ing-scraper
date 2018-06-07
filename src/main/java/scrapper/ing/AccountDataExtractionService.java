@@ -1,6 +1,6 @@
 package scrapper.ing;
 
-import scrapper.ing.client.ConnectionProxyService;
+import scrapper.ing.client.DataDownloaderService;
 import scrapper.ing.security.PasswordBehaviorHandler;
 import scrapper.ing.security.PasswordMetadata;
 import scrapper.ing.security.SessionData;
@@ -8,28 +8,30 @@ import scrapper.ing.user.experience.ConsoleUserInterface;
 
 import java.util.List;
 
-public class AccountDataExtractionService {
+class AccountDataExtractionService {
 
     private final ConsoleUserInterface userInterface;
-    private final ConnectionProxyService dataProvider;
+    private final DataDownloaderService dataProvider;
 
-    public AccountDataExtractionService(ConsoleUserInterface ui, ConnectionProxyService dataProvider) {
+    AccountDataExtractionService(ConsoleUserInterface ui, DataDownloaderService dataProvider) {
         this.userInterface = ui;
         this.dataProvider = dataProvider;
     }
 
-    public void downloadAccountDataWithUserInteraction() {
+    void displayAccountDataWithUserInteraction() {
         this.userInterface.displayWelcomeMessage();
 
         String login = this.userInterface.askUserForLogin();
 
         if (login.equals("")) {
+            this.userInterface.displayFailureMessage();
             return;
         }
 
         PasswordMetadata passwordMetadata = this.dataProvider.doFirstLogInStep(login);
 
         if (passwordMetadata.equals(PasswordMetadata.EMPTY)) {
+            this.userInterface.displayFailureMessage();
             return;
         }
 
@@ -38,6 +40,7 @@ public class AccountDataExtractionService {
         char[] password = this.userInterface.askUserForNeededPasswordCharacters(positionsOfRevealedCharacters);
 
         if (password.length == 0) {
+            this.userInterface.displayFailureMessage();
             return;
         }
 
