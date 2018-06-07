@@ -55,7 +55,7 @@ public class DataDownloaderServiceTest {
         assertEquals(AuthenticatedSession.EMPTY, response);
     }
 
-    // due to lack of test credentials can't implement it
+    // due to lack of test credentials can't implement it in a meaningful way
     // shouldProceedOnProperLoginPasswordPair()
 
 

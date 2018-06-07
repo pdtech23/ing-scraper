@@ -74,9 +74,9 @@ public class ResponseDataExtractor {
         return header.substring(i, j);
     }
 
-    public AuthenticatedSession extractAuthenticatedSession(Response authorizationResponse) {
-        String token = this.extractSessionToken(authorizationResponse);
-        String sessionId = this.extractSessionId(authorizationResponse);
+    public AuthenticatedSession extractAuthenticatedSession(Response authenticationResponse) {
+        String token = this.extractSessionToken(authenticationResponse);
+        String sessionId = this.extractSessionId(authenticationResponse);
         if (token.isEmpty() || sessionId.isEmpty()) {
             return AuthenticatedSession.EMPTY;
         }
@@ -89,6 +89,7 @@ public class ResponseDataExtractor {
             if (!jsonBody.has(DATA_FIELD_KEY)) {
                 return Collections.emptyList();
             }
+
             JSONObject accounts = jsonBody.getJSONObject(DATA_FIELD_KEY);
             if (!accounts.has(SAV_FIELD_KEY) || !accounts.has(CUR_FIELD_KEY)) {
                 return Collections.emptyList();

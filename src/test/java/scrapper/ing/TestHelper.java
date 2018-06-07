@@ -6,7 +6,7 @@ import scrapper.ing.security.PasswordMetadata;
 
 public class TestHelper {
 
-    public static final IngAccountInfo SAMPLE_ACCOUNT_INFO = new IngAccountInfo("1234", new Money(12.34, "PLN"),
+    public static final IngAccountInfo SAMPLE_ACCOUNT_INFO = new IngAccountInfo("1337", new Money(12.34, "PLN"),
             "super acc");
 
     private static final String SAMPLE_UNAUTHENTICATED_SESSION_ID = "unauthenticatedSessionId";

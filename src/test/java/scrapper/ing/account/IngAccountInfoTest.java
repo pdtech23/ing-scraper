@@ -16,6 +16,6 @@ public class IngAccountInfoTest {
         String result = info.toString();
 
         // then
-        assertEquals("Account super acc no. 1234; available balance: 12.34 PLN", result);
+        assertEquals("Account super acc no. 1337; available balance: 12.34 PLN", result);
     }
 }
