@@ -10,7 +10,6 @@ import scrapper.ing.security.PasswordMetadata;
 
 import java.util.List;
 
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class ResponseDataExtractorTest {
@@ -29,22 +28,22 @@ public class ResponseDataExtractorTest {
 
         // then
         assertTrue(accountInfos.isEmpty());
-        assertSame(AuthenticatedSession.EMPTY, authenticatedSession);
-        assertSame(PasswordMetadata.EMPTY, passwordMetadata);
+        assertTrue(authenticatedSession.isEmpty());
+        assertTrue(passwordMetadata.isEmpty());
     }
 
     // Tests below would be way better if they could work on actual responses not mocks
     @Test
     public void shouldReturnAccountInfoOnProperResponse() throws JSONException {
         // given
-        String jsonAsString = "{}";
+        String jsonAsString = "{\"data\":{\"sav\":[],\"cur\":[]}}";
         Response response = new Response(new JSONObject(jsonAsString), new Header[]{});
 
         // when
-        this.testedService.extractAccountsInfo(response);
+        List<IngAccountInfo> result = this.testedService.extractAccountsInfo(response);
 
         // then
-        assertTrue(true);
+        assertTrue(result.isEmpty());
 
     }
 }

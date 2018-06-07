@@ -22,4 +22,8 @@ public class AuthenticatedSession {
     public String getAuthenticatedSessionId() {
         return this.authenticatedSessionId;
     }
+
+    public boolean isEmpty() {
+        return this == EMPTY;
+    }
 }

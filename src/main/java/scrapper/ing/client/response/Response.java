@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class Response {
 
-    public static final Response EMPTY_RESPONSE = new Response(new JSONObject(), new Header[0]);
+    public static final Response EMPTY = new Response(new JSONObject(), new Header[0]);
 
     private JSONObject jsonBody;
     private Header[] headers;
@@ -21,5 +21,9 @@ public class Response {
 
     Header[] getHeaders() {
         return this.headers;
+    }
+
+    public boolean isEmpty() {
+        return this == EMPTY;
     }
 }

@@ -40,7 +40,7 @@ public class DataDownloaderService {
 
         Response response = this.executeJsonRequest(httpPost, json);
 
-        if (response == Response.EMPTY_RESPONSE) {
+        if (response.isEmpty()) {
             return PasswordMetadata.EMPTY;
         }
 
@@ -59,7 +59,7 @@ public class DataDownloaderService {
 
         Response responseResult = this.executeJsonRequest(httpPost, json);
 
-        if (responseResult == Response.EMPTY_RESPONSE) {
+        if (responseResult.isEmpty()) {
             return AuthenticatedSession.EMPTY;
         }
 
@@ -78,7 +78,7 @@ public class DataDownloaderService {
         String json = "{\"token\":\"" + authenticatedSession.getToken() + "\",\"trace\":\"\",\"locale\":\"PL\"}";
         Response response = this.executeJsonRequest(httpPost, json);
 
-        if (response == Response.EMPTY_RESPONSE) {
+        if (response.isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -96,7 +96,7 @@ public class DataDownloaderService {
             return new Response(this.extractResponseJson(response), response.getAllHeaders());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            return Response.EMPTY_RESPONSE;
+            return Response.EMPTY;
         }
     }
 

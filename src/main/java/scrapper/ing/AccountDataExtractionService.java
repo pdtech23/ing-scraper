@@ -23,14 +23,14 @@ class AccountDataExtractionService {
 
         String login = this.userInterface.askUserForLogin();
 
-        if (login.equals("")) {
+        if (login.isEmpty()) {
             this.userInterface.displayFailureMessage();
             return;
         }
 
         PasswordMetadata passwordMetadata = this.dataProvider.doFirstLogInStep(login);
 
-        if (passwordMetadata.equals(PasswordMetadata.EMPTY)) {
+        if (passwordMetadata.isEmpty()) {
             this.userInterface.displayFailureMessage();
             return;
         }
@@ -46,7 +46,7 @@ class AccountDataExtractionService {
 
         AuthenticatedSession session = this.dataProvider.createAuthenticatedSession(login, password, passwordMetadata);
 
-        if (session == AuthenticatedSession.EMPTY) {
+        if (session.isEmpty()) {
             this.userInterface.displayFailureMessage();
         } else {
             this.userInterface.printAccounts(this.dataProvider.getAccountsInfo(session));
