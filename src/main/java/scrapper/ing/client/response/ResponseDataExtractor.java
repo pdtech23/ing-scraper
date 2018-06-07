@@ -6,19 +6,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.account.Money;
+import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordMetadata;
-import scrapper.ing.security.SessionData;
 
 import java.util.*;
 
 public class ResponseDataExtractor {
 
-    public PasswordMetadata extractPasswordMetadata(ResponseData responseData) {
+    public PasswordMetadata extractPasswordMetadata(Response response) {
 
         try {
-            JSONObject data = responseData.getJsonBody().getJSONObject("data");
+            JSONObject data = response.getJsonBody().getJSONObject("data");
             return new PasswordMetadata(data.getString("salt"), data.getString("mask"), data.getString("key"), this
-                    .extractSessionId(responseData));
+                    .extractSessionId(response));
         } catch (JSONException e) {
             e.printStackTrace();
             return PasswordMetadata.EMPTY;
@@ -26,7 +26,7 @@ public class ResponseDataExtractor {
 
     }
 
-    private String extractSessionToken(ResponseData responseResult) {
+    private String extractSessionToken(Response responseResult) {
         try {
             return responseResult.getJsonBody().getJSONObject("data").getString("token");
         } catch (JSONException e) {
@@ -35,8 +35,8 @@ public class ResponseDataExtractor {
         }
     }
 
-    private String extractSessionId(ResponseData responseData) {
-        Optional<Header> sessionHeader = Arrays.stream(responseData.getHeaders()).filter(header -> header.getName()
+    private String extractSessionId(Response response) {
+        Optional<Header> sessionHeader = Arrays.stream(response.getHeaders()).filter(header -> header.getName()
                 .equals("Set-Cookie")).filter(cookieHeader -> cookieHeader.getValue().contains("JSESSIONID"))
                 .findFirst();
 
@@ -49,16 +49,16 @@ public class ResponseDataExtractor {
         return header.substring(i, j);
     }
 
-    public SessionData extractAuthenticatedSession(ResponseData authorizationResponse) {
+    public AuthenticatedSession extractAuthenticatedSession(Response authorizationResponse) {
         String token = this.extractSessionToken(authorizationResponse);
         String sessionId = this.extractSessionId(authorizationResponse);
         if (token.isEmpty() || sessionId.isEmpty()) {
-            return SessionData.EMPTY;
+            return AuthenticatedSession.EMPTY;
         }
-        return new SessionData(token, sessionId);
+        return new AuthenticatedSession(token, sessionId);
     }
 
-    public List<IngAccountInfo> extractAccountsInfo(ResponseData jsonResponse) {
+    public List<IngAccountInfo> extractAccountsInfo(Response jsonResponse) {
         try {
             JSONObject accounts = jsonResponse.getJsonBody().getJSONObject("data");
             List<IngAccountInfo> result = new ArrayList<>();

@@ -4,8 +4,8 @@ import org.junit.Test;
 import scrapper.ing.TestHelper;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.client.response.ResponseDataExtractor;
+import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordMetadata;
-import scrapper.ing.security.SessionData;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-public class ConnectionProxyTest {
+public class DataDownloaderServiceTest {
 
     private final DataDownloaderService testedService = new DataDownloaderService(new ResponseDataExtractor());
 
@@ -37,19 +37,20 @@ public class ConnectionProxyTest {
         PasswordMetadata passwordMetadata = TestHelper.SAMPLE_PASSWORD_METADATA;
 
         // when
-        SessionData response = this.testedService.createAuthenticatedSession(login, password, passwordMetadata);
+        AuthenticatedSession response = this.testedService.createAuthenticatedSession(login, password,
+                passwordMetadata);
 
         // then
-        assertEquals(SessionData.EMPTY, response);
+        assertEquals(AuthenticatedSession.EMPTY, response);
     }
 
     @Test
     public void shouldFailWithoutAuthentication() {
         // given
-        SessionData sessionData = new SessionData("123", "abc");
+        AuthenticatedSession authenticatedSession = new AuthenticatedSession("123", "abc");
 
         // when
-        List<IngAccountInfo> accountsInfo = this.testedService.getAccountsInfo(sessionData);
+        List<IngAccountInfo> accountsInfo = this.testedService.getAccountsInfo(authenticatedSession);
 
         // then
         assertEquals(Collections.emptyList(), accountsInfo);

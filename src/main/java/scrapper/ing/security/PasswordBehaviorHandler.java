@@ -7,8 +7,11 @@ import java.util.List;
 
 public class PasswordBehaviorHandler {
 
-    public static final char MARKER = '*';
     public static final int NUMBER_OF_REVEALED_CHARACTERS = 5;
+    private static final char MARKER = '*';
+
+    private PasswordBehaviorHandler() {
+    }
 
     public static List<Integer> extractPositionsOfRevealedCharacters(String mask) {
         char[] chars = mask.toCharArray();
@@ -23,16 +26,16 @@ public class PasswordBehaviorHandler {
 
     public static String createPasswordHash(PasswordMetadata passwordMetadata, char[] password) {
         String saltWithPassword = PasswordBehaviorHandler.mixSaltAndPassword(PasswordBehaviorHandler
-                .createSaltWithMaskOn
-                (passwordMetadata), password);
+                .createSaltWithMaskOn(passwordMetadata), password);
         return HmacUtils.hmacSha1Hex(passwordMetadata.getKey(), saltWithPassword);
     }
 
     public static String mixSaltAndPassword(String saltWithMask, char[] passphrase) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0, j = 0; i < saltWithMask.length(); ++i) {
+        int currentCharacterIndex = 0;
+        for (int i = 0; i < saltWithMask.length(); ++i) {
             if (saltWithMask.charAt(i) == MARKER) {
-                result.append(passphrase[j++]);
+                result.append(passphrase[currentCharacterIndex++]);
             } else {
                 result.append(saltWithMask.charAt(i));
             }

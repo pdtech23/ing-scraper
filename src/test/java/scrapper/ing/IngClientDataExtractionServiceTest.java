@@ -6,8 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.client.DataDownloaderService;
+import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordMetadata;
-import scrapper.ing.security.SessionData;
 import scrapper.ing.user.experience.ConsoleUserInterface;
 
 import java.util.Arrays;
@@ -20,9 +20,9 @@ public class IngClientDataExtractionServiceTest {
     private static final List<IngAccountInfo> SAMPLE_ACCOUNTS_LIST = Arrays.asList(TestHelper.SAMPLE_ACCOUNT_INFO,
             TestHelper.SAMPLE_ACCOUNT_INFO);
     private static final String SAMPLE_LOGIN = "janusz";
-    private static final SessionData SAMPLE_SESSION_DATA = new SessionData("token", "sessionId");
+    private static final AuthenticatedSession SAMPLE_SESSION_DATA = new AuthenticatedSession("token", "sessionId");
     private static final List<Integer> SAMPLE_CHARACTERS_POSITIONS = Arrays.asList(1, 2, 3, 4, 5);
-    
+
     private AccountDataExtractionService testedService;
 
     @Mocked
@@ -65,7 +65,7 @@ public class IngClientDataExtractionServiceTest {
             IngClientDataExtractionServiceTest.this.dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN,
                     SAMPLE_PASSWORD, TestHelper.SAMPLE_PASSWORD_METADATA);
 
-            this.result = SessionData.EMPTY;
+            this.result = AuthenticatedSession.EMPTY;
         }};
         this.expectationOfFailureMessage();
 

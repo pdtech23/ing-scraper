@@ -1,6 +1,7 @@
 package scrapper.ing.account;
 
 public class IngAccountInfo {
+
     private String accountNumber;
     private Money availableBalance;
     private String name;

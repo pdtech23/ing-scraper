@@ -9,11 +9,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.json.JSONException;
 import org.json.JSONObject;
 import scrapper.ing.account.IngAccountInfo;
-import scrapper.ing.client.response.ResponseData;
+import scrapper.ing.client.response.Response;
 import scrapper.ing.client.response.ResponseDataExtractor;
+import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordBehaviorHandler;
 import scrapper.ing.security.PasswordMetadata;
-import scrapper.ing.security.SessionData;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,16 +38,17 @@ public class DataDownloaderService {
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\"},\"locale\":\"PL\"}";
         HttpPost httpPost = new HttpPost(ING_REST_ENDPOINT_URI + "/renchecklogin");
 
-        ResponseData responseData = this.executeJsonRequest(httpPost, json);
+        Response response = this.executeJsonRequest(httpPost, json);
 
-        if (responseData == ResponseData.EMPTY_RESPONSE) {
+        if (response == Response.EMPTY_RESPONSE) {
             return PasswordMetadata.EMPTY;
         }
 
-        return this.responseDataExtractor.extractPasswordMetadata(responseData);
+        return this.responseDataExtractor.extractPasswordMetadata(response);
     }
 
-    public SessionData createAuthenticatedSession(String login, char[] password, PasswordMetadata passwordMetadata) {
+    public AuthenticatedSession createAuthenticatedSession(String login, char[] password, PasswordMetadata
+            passwordMetadata) {
 
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\",\"pwdhash\":\"" +
                 PasswordBehaviorHandler.createPasswordHash(passwordMetadata, password) + "\",\"di\":\"T\"}," +
@@ -56,28 +57,28 @@ public class DataDownloaderService {
         HttpPost httpPost = new HttpPost(LOGIN_URI);
         httpPost.setHeader("Cookie", "JSESSIONID=" + passwordMetadata.getUnauthenticatedSessionId());
 
-        ResponseData responseResult = this.executeJsonRequest(httpPost, json);
+        Response responseResult = this.executeJsonRequest(httpPost, json);
 
-        if (responseResult == ResponseData.EMPTY_RESPONSE) {
-            return SessionData.EMPTY;
+        if (responseResult == Response.EMPTY_RESPONSE) {
+            return AuthenticatedSession.EMPTY;
         }
 
         return this.responseDataExtractor.extractAuthenticatedSession(responseResult);
     }
 
 
-    public List<IngAccountInfo> getAccountsInfo(SessionData sessionData) {
+    public List<IngAccountInfo> getAccountsInfo(AuthenticatedSession authenticatedSession) {
         HttpPost httpPost = new HttpPost(GET_ALL_ACCOUNTS_URI);
 
-        httpPost.setHeader("Cookie", "JSESSIONID=" + sessionData.getSessionId());
+        httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.getAuthenticatedSessionId());
         httpPost.setHeader("User-Agent", "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, " +
                 "like Gecko) Ubuntu Chromium/66.0.3359.181 Chrome/66.0.3359.181 Safari/537.36");
         httpPost.setHeader("X-Wolf-Protection", "0.7616067842109708");
 
-        String json = "{\"token\":\"" + sessionData.getToken() + "\",\"trace\":\"\",\"locale\":\"PL\"}";
-        ResponseData response = this.executeJsonRequest(httpPost, json);
+        String json = "{\"token\":\"" + authenticatedSession.getToken() + "\",\"trace\":\"\",\"locale\":\"PL\"}";
+        Response response = this.executeJsonRequest(httpPost, json);
 
-        if (response == ResponseData.EMPTY_RESPONSE) {
+        if (response == Response.EMPTY_RESPONSE) {
             return Collections.emptyList();
         }
 
@@ -85,17 +86,17 @@ public class DataDownloaderService {
 
     }
 
-    private ResponseData executeJsonRequest(HttpPost httpPost, String jsonBody) {
+    private Response executeJsonRequest(HttpPost httpPost, String jsonBody) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
             httpPost.setHeader("Content-type", "application/json");
             httpPost.setEntity(new StringEntity(jsonBody));
             CloseableHttpResponse response = client.execute(httpPost);
 
-            return new ResponseData(this.extractResponseJson(response), response.getAllHeaders());
+            return new Response(this.extractResponseJson(response), response.getAllHeaders());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            return ResponseData.EMPTY_RESPONSE;
+            return Response.EMPTY_RESPONSE;
         }
     }
 

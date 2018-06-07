@@ -1,9 +1,9 @@
 package scrapper.ing;
 
 import scrapper.ing.client.DataDownloaderService;
+import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordBehaviorHandler;
 import scrapper.ing.security.PasswordMetadata;
-import scrapper.ing.security.SessionData;
 import scrapper.ing.user.experience.ConsoleUserInterface;
 
 import java.util.List;
@@ -44,9 +44,9 @@ class AccountDataExtractionService {
             return;
         }
 
-        SessionData session = this.dataProvider.createAuthenticatedSession(login, password, passwordMetadata);
+        AuthenticatedSession session = this.dataProvider.createAuthenticatedSession(login, password, passwordMetadata);
 
-        if (session == SessionData.EMPTY) {
+        if (session == AuthenticatedSession.EMPTY) {
             this.userInterface.displayFailureMessage();
         } else {
             this.userInterface.printAccounts(this.dataProvider.getAccountsInfo(session));
