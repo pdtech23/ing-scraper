@@ -41,14 +41,16 @@ public class ConsoleUserInterface {
         for (int i = 0; i < PasswordBehaviorHandler.NUMBER_OF_REVEALED_CHARACTERS; ++i) {
             System.out.println(PASSPHRASE_QUESTION_PREFIX + positionsOfRevealedCharacters.get(i) +
                     PASSPHRASE_QUESTION_POSTFIX);
-
             try {
-                passphrase[i] = this.userInputReader.readLine().charAt(0);
+                String input = this.userInputReader.readLine();
+                if (input.isEmpty()) {
+                    return new char[0];
+                }
+                passphrase[i] = input.charAt(0);
             } catch (IOException | StringIndexOutOfBoundsException e) {
                 e.printStackTrace();
                 return new char[0];
             }
-
         }
         return passphrase;
     }

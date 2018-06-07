@@ -1,6 +1,5 @@
 package scrapper.ing.client;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import scrapper.ing.TestHelper;
 import scrapper.ing.account.IngAccountInfo;
@@ -56,19 +55,9 @@ public class DataDownloaderServiceTest {
         assertEquals(AuthenticatedSession.EMPTY, response);
     }
 
-    // ignored due to lack of test credentials ;(
-    @Ignore
-    @Test
-    public void shouldProceedOnProperLoginPasswordPair() {
-        // given
-        // proper login, password and metadata
+    // due to lack of test credentials can't implement it
+    // shouldProceedOnProperLoginPasswordPair()
 
-        // when
-        // call method
-
-        // then
-        // assert that result is success
-    }
 
     @Test
     public void shouldFailWithoutAuthentication() {

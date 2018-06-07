@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ConsoleUserInterfaceTest {
 
-    public static final String SAMPLE_INPUT = "janusz\njanusz\njanusz\njanusz\njanusz\njanusz";
+    private static final String SAMPLE_INPUT = "janusz\njanusz\njanusz\njanusz\njanusz\njanusz";
     private final ByteArrayInputStream sampleInput = new ByteArrayInputStream(SAMPLE_INPUT.getBytes());
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private ConsoleUserInterface testedUserInterface;
@@ -56,7 +56,6 @@ public class ConsoleUserInterfaceTest {
     @Test
     public void shouldBeAbleToReadUsersLogin() {
         // given
-
 
         // when
         String result = this.testedUserInterface.askUserForLogin();
