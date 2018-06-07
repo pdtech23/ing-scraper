@@ -13,26 +13,50 @@ import java.util.*;
 
 public class ResponseDataExtractor {
 
+    private static final String DATA_FIELD_KEY = "data";
+    private static final String SAV_FIELD_KEY = "sav";
+    private static final String CUR_FIELD_KEY = "cur";
+    private static final String ACCOUNT_KEY = "acct";
+    private static final String AVAILABLE_BALANCE_KEY = "avbal";
+    private static final String CURRENCY_KEY = "curr";
+    private static final String NAME_KEY = "name";
+    private static final String SALT = "salt";
+    private static final String MASK = "mask";
+    private static final String KEY = "key";
+
     public PasswordMetadata extractPasswordMetadata(Response response) {
 
         try {
-            JSONObject data = response.getJsonBody().getJSONObject("data");
-            return new PasswordMetadata(data.getString("salt"), data.getString("mask"), data.getString("key"), this
-                    .extractSessionId(response));
+            JSONObject jsonBody = response.getJsonBody();
+            if (!jsonBody.has(DATA_FIELD_KEY)) {
+                return PasswordMetadata.EMPTY;
+            }
+            JSONObject data = response.getJsonBody().getJSONObject(DATA_FIELD_KEY);
+            if (data.has(SALT) && data.has(MASK) && data.has(KEY)) {
+                return new PasswordMetadata(data.getString(SALT), data.getString(MASK), data.getString(KEY), this
+                        .extractSessionId(response));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
-            return PasswordMetadata.EMPTY;
         }
+        return PasswordMetadata.EMPTY;
 
     }
 
-    private String extractSessionToken(Response responseResult) {
+    private String extractSessionToken(Response response) {
         try {
-            return responseResult.getJsonBody().getJSONObject("data").getString("token");
+            JSONObject jsonBody = response.getJsonBody();
+            if (!jsonBody.has(DATA_FIELD_KEY)) {
+                return "";
+            }
+            JSONObject data = jsonBody.getJSONObject(DATA_FIELD_KEY);
+            if (data.has("token")) {
+                return data.getString("token");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
-            return "";
         }
+        return "";
     }
 
     private String extractSessionId(Response response) {
@@ -43,6 +67,7 @@ public class ResponseDataExtractor {
         if (!sessionHeader.isPresent()) {
             return "";
         }
+
         String header = sessionHeader.get().getValue();
         int i = header.indexOf('=') + 1;
         int j = header.indexOf(';');
@@ -58,13 +83,17 @@ public class ResponseDataExtractor {
         return new AuthenticatedSession(token, sessionId);
     }
 
-    public List<IngAccountInfo> extractAccountsInfo(Response jsonResponse) {
+    public List<IngAccountInfo> extractAccountsInfo(Response response) {
         try {
-            JSONObject accounts = jsonResponse.getJsonBody().getJSONObject("data");
-            List<IngAccountInfo> result = new ArrayList<>();
-            JSONArray savingAccounts = accounts.getJSONArray("sav");
-            JSONArray currentAccounts = accounts.getJSONArray("cur");
+            JSONObject jsonBody = response.getJsonBody();
+            if (!jsonBody.has(DATA_FIELD_KEY) || !jsonBody.has(SAV_FIELD_KEY) || !jsonBody.has(CUR_FIELD_KEY)) {
+                return Collections.emptyList();
+            }
+            JSONObject accounts = jsonBody.getJSONObject(DATA_FIELD_KEY);
+            JSONArray savingAccounts = accounts.getJSONArray(SAV_FIELD_KEY);
+            JSONArray currentAccounts = accounts.getJSONArray(CUR_FIELD_KEY);
 
+            List<IngAccountInfo> result = new ArrayList<>();
             this.addAccounts(result, savingAccounts);
             this.addAccounts(result, currentAccounts);
 
@@ -77,9 +106,15 @@ public class ResponseDataExtractor {
 
     private void addAccounts(List<IngAccountInfo> result, JSONArray savingAccounts) throws JSONException {
         for (int i = 0; i < savingAccounts.length(); i++) {
-            JSONObject node = savingAccounts.getJSONObject(i);
-            IngAccountInfo account = new IngAccountInfo(node.getString("acct"), new Money(node.getDouble("avbal"),
-                    node.getString("curr")), node.getString("name"));
+            JSONObject current = savingAccounts.getJSONObject(i);
+
+            if (!current.has(ACCOUNT_KEY) || !current.has(AVAILABLE_BALANCE_KEY) || !current.has(CURRENCY_KEY) ||
+                    !current.has(NAME_KEY)) {
+                return;
+            }
+
+            IngAccountInfo account = new IngAccountInfo(current.getString(ACCOUNT_KEY), new Money(current.getDouble
+                    (AVAILABLE_BALANCE_KEY), current.getString(CURRENCY_KEY)), current.getString(NAME_KEY));
             result.add(account);
         }
     }

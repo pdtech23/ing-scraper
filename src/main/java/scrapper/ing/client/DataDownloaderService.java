@@ -103,6 +103,9 @@ public class DataDownloaderService {
     private JSONObject extractResponseJson(HttpResponse response) throws IOException, JSONException {
         String jsonAsString = new BufferedReader(new InputStreamReader(response.getEntity().getContent())).lines()
                 .collect(Collectors.joining("\n"));
+        if (response.getStatusLine().getStatusCode() != 200) {
+            return new JSONObject();
+        }
         return new JSONObject(jsonAsString);
     }
 }

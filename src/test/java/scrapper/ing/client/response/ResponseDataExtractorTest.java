@@ -11,7 +11,7 @@ import scrapper.ing.security.PasswordMetadata;
 
 import java.util.List;
 
-public class ResponseExtractorTest {
+public class ResponseDataExtractorTest {
 
     private ResponseDataExtractor testedService = new ResponseDataExtractor();
 

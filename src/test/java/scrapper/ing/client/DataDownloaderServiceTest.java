@@ -1,5 +1,6 @@
 package scrapper.ing.client;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import scrapper.ing.TestHelper;
 import scrapper.ing.account.IngAccountInfo;
@@ -10,15 +11,14 @@ import scrapper.ing.security.PasswordMetadata;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.*;
 
 public class DataDownloaderServiceTest {
 
     private final DataDownloaderService testedService = new DataDownloaderService(new ResponseDataExtractor());
 
     @Test
-    public void shouldProceedOnAnyLogin() {
+    public void shouldProceedOnAnyLoginExceptEmpty() {
         // given
         String login = "test";
 
@@ -27,6 +27,18 @@ public class DataDownloaderServiceTest {
 
         // then
         assertNotSame(PasswordMetadata.EMPTY, response);
+    }
+
+    @Test
+    public void shouldFailOnEmptyLogin() {
+        // given
+        String login = "";
+
+        // when
+        PasswordMetadata response = this.testedService.doFirstLogInStep(login);
+
+        // then
+        assertSame(PasswordMetadata.EMPTY, response);
     }
 
     @Test
@@ -42,6 +54,20 @@ public class DataDownloaderServiceTest {
 
         // then
         assertEquals(AuthenticatedSession.EMPTY, response);
+    }
+
+    // ignored due to lack of test credentials ;(
+    @Ignore
+    @Test
+    public void shouldProceedOnProperLoginPasswordPair() {
+        // given
+        // proper login, password and metadata
+
+        // when
+        // call method
+
+        // then
+        // assert that result is success
     }
 
     @Test

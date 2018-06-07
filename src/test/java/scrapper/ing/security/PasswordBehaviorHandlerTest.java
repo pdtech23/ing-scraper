@@ -1,9 +1,7 @@
-package scrapper.ing.utils;
+package scrapper.ing.security;
 
 import org.apache.commons.codec.digest.HmacUtils;
 import org.junit.Test;
-import scrapper.ing.security.PasswordBehaviorHandler;
-import scrapper.ing.security.PasswordMetadata;
 
 import java.util.Arrays;
 import java.util.List;
