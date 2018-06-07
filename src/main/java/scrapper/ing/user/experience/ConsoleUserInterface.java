@@ -41,6 +41,7 @@ public class ConsoleUserInterface {
         for (int i = 0; i < PasswordBehaviorHandler.NUMBER_OF_REVEALED_CHARACTERS; ++i) {
             System.out.println(PASSPHRASE_QUESTION_PREFIX + positionsOfRevealedCharacters.get(i) +
                     PASSPHRASE_QUESTION_POSTFIX);
+
             try {
                 String input = this.userInputReader.readLine();
                 if (input.isEmpty()) {
