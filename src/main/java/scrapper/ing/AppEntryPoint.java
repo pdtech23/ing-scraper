@@ -9,6 +9,7 @@ public class AppEntryPoint {
     public static void main(String[] args) {
 
         ConsoleUserInterface ui = new ConsoleUserInterface();
+
         ResponseDataExtractor extractor = new ResponseDataExtractor();
         DataDownloaderService dataProvider = new DataDownloaderService(extractor);
 

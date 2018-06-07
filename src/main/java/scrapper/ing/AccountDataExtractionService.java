@@ -3,7 +3,7 @@ package scrapper.ing;
 import scrapper.ing.client.DataDownloaderService;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordBehaviorHandler;
-import scrapper.ing.security.PasswordMetadata;
+import scrapper.ing.security.UnauthenticatedSession;
 import scrapper.ing.user.experience.ConsoleUserInterface;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.List;
 class AccountDataExtractionService {
 
     private final ConsoleUserInterface userInterface;
-    private final DataDownloaderService dataProvider;
+    private final DataDownloaderService dataDownloaderService;
 
-    AccountDataExtractionService(ConsoleUserInterface ui, DataDownloaderService dataProvider) {
+    AccountDataExtractionService(ConsoleUserInterface ui, DataDownloaderService dataDownloaderService) {
         this.userInterface = ui;
-        this.dataProvider = dataProvider;
+        this.dataDownloaderService = dataDownloaderService;
     }
 
     void displayAccountDataWithUserInteraction() {
@@ -28,15 +28,15 @@ class AccountDataExtractionService {
             return;
         }
 
-        PasswordMetadata passwordMetadata = this.dataProvider.doFirstLogInStep(login);
+        UnauthenticatedSession unauthenticatedSession = this.dataDownloaderService.createUnauthenticatedSession(login);
 
-        if (passwordMetadata.isEmpty()) {
+        if (unauthenticatedSession.isEmpty()) {
             this.userInterface.displayFailureMessage();
             return;
         }
 
         List<Integer> positionsOfRevealedCharacters = PasswordBehaviorHandler.extractPositionsOfRevealedCharacters
-                (passwordMetadata.getMask());
+                (unauthenticatedSession.getMask());
         char[] password = this.userInterface.askUserForNeededPasswordCharacters(positionsOfRevealedCharacters);
 
         if (password.length == 0) {
@@ -44,12 +44,13 @@ class AccountDataExtractionService {
             return;
         }
 
-        AuthenticatedSession session = this.dataProvider.createAuthenticatedSession(login, password, passwordMetadata);
+        AuthenticatedSession session = this.dataDownloaderService.createAuthenticatedSession(login, password,
+                unauthenticatedSession);
 
         if (session.isEmpty()) {
             this.userInterface.displayFailureMessage();
         } else {
-            this.userInterface.printAccounts(this.dataProvider.getAccountsInfo(session));
+            this.userInterface.printAccounts(this.dataDownloaderService.getAccountsInfo(session));
         }
     }
 }

@@ -7,7 +7,7 @@ import org.junit.Test;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.client.DataDownloaderService;
 import scrapper.ing.security.AuthenticatedSession;
-import scrapper.ing.security.PasswordMetadata;
+import scrapper.ing.security.UnauthenticatedSession;
 import scrapper.ing.user.experience.ConsoleUserInterface;
 
 import java.util.Arrays;
@@ -107,8 +107,8 @@ public class IngClientDataExtractionServiceTest {
         // given
         this.givenSomeLogin();
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.dataExtractor.doFirstLogInStep(this.anyString);
-            this.result = PasswordMetadata.EMPTY;
+            IngClientDataExtractionServiceTest.this.dataExtractor.createUnauthenticatedSession(this.anyString);
+            this.result = UnauthenticatedSession.EMPTY;
         }};
         this.expectationOfFailureMessage();
 
@@ -146,7 +146,7 @@ public class IngClientDataExtractionServiceTest {
 
     private void givenSuccessfulConnection() {
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.dataExtractor.doFirstLogInStep(this.anyString);
+            IngClientDataExtractionServiceTest.this.dataExtractor.createUnauthenticatedSession(this.anyString);
             this.result = TestHelper.SAMPLE_PASSWORD_METADATA;
         }};
     }

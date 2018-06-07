@@ -13,7 +13,7 @@ import scrapper.ing.client.response.Response;
 import scrapper.ing.client.response.ResponseDataExtractor;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordBehaviorHandler;
-import scrapper.ing.security.PasswordMetadata;
+import scrapper.ing.security.UnauthenticatedSession;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 public class DataDownloaderService {
     private static final String ING_REST_ENDPOINT_URI = "https://login.ingbank.pl/mojeing/rest";
+    private static final String CHECK_LOGIN_URI = ING_REST_ENDPOINT_URI + "/renchecklogin";
     private static final String GET_ALL_ACCOUNTS_URI = ING_REST_ENDPOINT_URI + "/rengetallaccounts";
     private static final String LOGIN_URI = ING_REST_ENDPOINT_URI + "/renlogin";
 
@@ -33,29 +34,29 @@ public class DataDownloaderService {
         this.responseDataExtractor = responseDataExtractor;
     }
 
-    public PasswordMetadata doFirstLogInStep(String login) {
+    public UnauthenticatedSession createUnauthenticatedSession(String login) {
 
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\"},\"locale\":\"PL\"}";
-        HttpPost httpPost = new HttpPost(ING_REST_ENDPOINT_URI + "/renchecklogin");
+        HttpPost httpPost = new HttpPost(CHECK_LOGIN_URI);
 
         Response response = this.executeJsonRequest(httpPost, json);
 
         if (response.isEmpty()) {
-            return PasswordMetadata.EMPTY;
+            return UnauthenticatedSession.EMPTY;
         }
 
-        return this.responseDataExtractor.extractPasswordMetadata(response);
+        return this.responseDataExtractor.extractUnauthenticatedSession(response);
     }
 
-    public AuthenticatedSession createAuthenticatedSession(String login, char[] password, PasswordMetadata
-            passwordMetadata) {
+    public AuthenticatedSession createAuthenticatedSession(String login, char[] password, UnauthenticatedSession
+            unauthenticatedSession) {
 
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\",\"pwdhash\":\"" +
-                PasswordBehaviorHandler.createPasswordHash(passwordMetadata, password) + "\",\"di\":\"T\"}," +
+                PasswordBehaviorHandler.createPasswordHash(unauthenticatedSession, password) + "\",\"di\":\"T\"}," +
                 "\"locale\":\"PL\"}";
 
         HttpPost httpPost = new HttpPost(LOGIN_URI);
-        httpPost.setHeader("Cookie", "JSESSIONID=" + passwordMetadata.getUnauthenticatedSessionId());
+        httpPost.setHeader("Cookie", "JSESSIONID=" + unauthenticatedSession.getUnauthenticatedSessionId());
 
         Response responseResult = this.executeJsonRequest(httpPost, json);
 

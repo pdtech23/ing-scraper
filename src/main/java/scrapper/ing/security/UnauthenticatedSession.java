@@ -1,22 +1,22 @@
 package scrapper.ing.security;
 
-public class PasswordMetadata {
+public class UnauthenticatedSession {
 
-    public static final PasswordMetadata EMPTY = new PasswordMetadata();
+    public static final UnauthenticatedSession EMPTY = new UnauthenticatedSession();
 
     private String salt;
     private String mask;
     private String key;
     private String unauthenticatedSessionId;
 
-    public PasswordMetadata(String salt, String mask, String key, String unauthenticatedSessionId) {
+    public UnauthenticatedSession(String salt, String mask, String key, String unauthenticatedSessionId) {
         this.salt = salt;
         this.mask = mask;
         this.key = key;
         this.unauthenticatedSessionId = unauthenticatedSessionId;
     }
 
-    private PasswordMetadata() {
+    private UnauthenticatedSession() {
     }
 
     public String getSalt() {

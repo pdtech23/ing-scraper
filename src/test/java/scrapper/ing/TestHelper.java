@@ -2,7 +2,7 @@ package scrapper.ing;
 
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.account.Money;
-import scrapper.ing.security.PasswordMetadata;
+import scrapper.ing.security.UnauthenticatedSession;
 
 public class TestHelper {
 
@@ -10,5 +10,6 @@ public class TestHelper {
             "super acc");
 
     private static final String SAMPLE_UNAUTHENTICATED_SESSION_ID = "unauthenticatedSessionId";
-    public static final PasswordMetadata SAMPLE_PASSWORD_METADATA = new PasswordMetadata("ONE_SALTY_BOY", "*****--------", "ONE_KEY_GRILL", SAMPLE_UNAUTHENTICATED_SESSION_ID);
+    public static final UnauthenticatedSession SAMPLE_PASSWORD_METADATA = new UnauthenticatedSession("ONE_SALTY_BOY",
+            "*****--------", "ONE_KEY_GRILL", SAMPLE_UNAUTHENTICATED_SESSION_ID);
 }

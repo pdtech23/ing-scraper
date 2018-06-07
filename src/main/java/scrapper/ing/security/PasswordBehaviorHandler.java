@@ -24,10 +24,10 @@ public class PasswordBehaviorHandler {
         return result;
     }
 
-    public static String createPasswordHash(PasswordMetadata passwordMetadata, char[] password) {
+    public static String createPasswordHash(UnauthenticatedSession unauthenticatedSession, char[] password) {
         String saltWithPassword = PasswordBehaviorHandler.mixSaltAndPassword(PasswordBehaviorHandler
-                .createSaltWithMaskOn(passwordMetadata), password);
-        return HmacUtils.hmacSha1Hex(passwordMetadata.getKey(), saltWithPassword);
+                .createSaltWithMaskOn(unauthenticatedSession), password);
+        return HmacUtils.hmacSha1Hex(unauthenticatedSession.getKey(), saltWithPassword);
     }
 
     public static String mixSaltAndPassword(String saltWithMask, char[] passphrase) {
@@ -43,7 +43,7 @@ public class PasswordBehaviorHandler {
         return result.toString();
     }
 
-    public static String createSaltWithMaskOn(PasswordMetadata metadata) {
+    public static String createSaltWithMaskOn(UnauthenticatedSession metadata) {
         String mask = metadata.getMask();
         String salt = metadata.getSalt();
 

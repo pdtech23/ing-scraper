@@ -7,7 +7,7 @@ import org.junit.Test;
 import scrapper.ing.TestHelper;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.security.AuthenticatedSession;
-import scrapper.ing.security.PasswordMetadata;
+import scrapper.ing.security.UnauthenticatedSession;
 
 import java.util.List;
 
@@ -26,12 +26,12 @@ public class ResponseDataExtractorTest {
         // when
         List<IngAccountInfo> accountInfos = this.testedService.extractAccountsInfo(response);
         AuthenticatedSession authenticatedSession = this.testedService.extractAuthenticatedSession(response);
-        PasswordMetadata passwordMetadata = this.testedService.extractPasswordMetadata(response);
+        UnauthenticatedSession unauthenticatedSession = this.testedService.extractUnauthenticatedSession(response);
 
         // then
         assertTrue(accountInfos.isEmpty());
         assertTrue(authenticatedSession.isEmpty());
-        assertTrue(passwordMetadata.isEmpty());
+        assertTrue(unauthenticatedSession.isEmpty());
     }
 
     // Tests below would be way better if they could work on actual responses not mocks

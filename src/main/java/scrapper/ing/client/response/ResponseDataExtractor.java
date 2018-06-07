@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.account.Money;
 import scrapper.ing.security.AuthenticatedSession;
-import scrapper.ing.security.PasswordMetadata;
+import scrapper.ing.security.UnauthenticatedSession;
 
 import java.util.*;
 
@@ -24,23 +24,21 @@ public class ResponseDataExtractor {
     private static final String MASK = "mask";
     private static final String KEY = "key";
 
-    public PasswordMetadata extractPasswordMetadata(Response response) {
-
+    public UnauthenticatedSession extractUnauthenticatedSession(Response response) {
         try {
             JSONObject jsonBody = response.getJsonBody();
             if (!jsonBody.has(DATA_FIELD_KEY)) {
-                return PasswordMetadata.EMPTY;
+                return UnauthenticatedSession.EMPTY;
             }
             JSONObject data = response.getJsonBody().getJSONObject(DATA_FIELD_KEY);
             if (data.has(SALT) && data.has(MASK) && data.has(KEY)) {
-                return new PasswordMetadata(data.getString(SALT), data.getString(MASK), data.getString(KEY), this
+                return new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data.getString(KEY), this
                         .extractSessionId(response));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return PasswordMetadata.EMPTY;
-
+        return UnauthenticatedSession.EMPTY;
     }
 
     private String extractSessionToken(Response response) {
@@ -59,6 +57,15 @@ public class ResponseDataExtractor {
         return "";
     }
 
+    public AuthenticatedSession extractAuthenticatedSession(Response authenticationResponse) {
+        String token = this.extractSessionToken(authenticationResponse);
+        String sessionId = this.extractSessionId(authenticationResponse);
+        if (token.isEmpty() || sessionId.isEmpty()) {
+            return AuthenticatedSession.EMPTY;
+        }
+        return new AuthenticatedSession(token, sessionId);
+    }
+
     private String extractSessionId(Response response) {
         Optional<Header> sessionHeader = Arrays.stream(response.getHeaders()).filter(header -> header.getName()
                 .equals("Set-Cookie")).filter(cookieHeader -> cookieHeader.getValue().contains("JSESSIONID"))
@@ -72,15 +79,6 @@ public class ResponseDataExtractor {
         int i = header.indexOf('=') + 1;
         int j = header.indexOf(';');
         return header.substring(i, j);
-    }
-
-    public AuthenticatedSession extractAuthenticatedSession(Response authenticationResponse) {
-        String token = this.extractSessionToken(authenticationResponse);
-        String sessionId = this.extractSessionId(authenticationResponse);
-        if (token.isEmpty() || sessionId.isEmpty()) {
-            return AuthenticatedSession.EMPTY;
-        }
-        return new AuthenticatedSession(token, sessionId);
     }
 
     public List<IngAccountInfo> extractAccountsInfo(Response response) {

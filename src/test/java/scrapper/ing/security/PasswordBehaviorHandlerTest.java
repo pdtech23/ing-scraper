@@ -42,7 +42,7 @@ public class PasswordBehaviorHandlerTest {
         // given
         String sampleSalt = "Gj1Uit0gyxKitJlqguphPHqKFH3DEkJ7";
         String sampleMask = "**+**+*+++++++++++++++++++++++++";
-        PasswordMetadata metadata = new PasswordMetadata(sampleSalt, sampleMask, "", "");
+        UnauthenticatedSession metadata = new UnauthenticatedSession(sampleSalt, sampleMask, "", "");
 
         // when
         String result = PasswordBehaviorHandler.createSaltWithMaskOn(metadata);
@@ -56,7 +56,7 @@ public class PasswordBehaviorHandlerTest {
         // given
         String sampleSalt = "Gj1Uit0gyxKitJlqguph3DEkJ7";
         String sampleMask = "*+*++*+++*++++*+++++++++++++++++";
-        PasswordMetadata metadata = new PasswordMetadata(sampleSalt, sampleMask, "", "");
+        UnauthenticatedSession metadata = new UnauthenticatedSession(sampleSalt, sampleMask, "", "");
 
         // when
         String result = PasswordBehaviorHandler.createSaltWithMaskOn(metadata);
@@ -71,7 +71,7 @@ public class PasswordBehaviorHandlerTest {
         String sampleSalt = "tk0XpsU5dAShJjJ5BS6nOnymXfCBRuSj";
         String sampleMask = "**++*++*+*++++++++++++++++++++++";
         String sampleKey = "75804255617903534713114162762950";
-        PasswordMetadata metadata = new PasswordMetadata(sampleSalt, sampleMask, sampleKey, "");
+        UnauthenticatedSession metadata = new UnauthenticatedSession(sampleSalt, sampleMask, sampleKey, "");
 
         // when
         String maskOnSalt = PasswordBehaviorHandler.createSaltWithMaskOn(metadata);

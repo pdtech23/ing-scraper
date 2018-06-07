@@ -5,7 +5,7 @@ import scrapper.ing.TestHelper;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.client.response.ResponseDataExtractor;
 import scrapper.ing.security.AuthenticatedSession;
-import scrapper.ing.security.PasswordMetadata;
+import scrapper.ing.security.UnauthenticatedSession;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,10 +22,10 @@ public class DataDownloaderServiceTest {
         String login = "test";
 
         // when
-        PasswordMetadata response = this.testedService.doFirstLogInStep(login);
+        UnauthenticatedSession response = this.testedService.createUnauthenticatedSession(login);
 
         // then
-        assertNotSame(PasswordMetadata.EMPTY, response);
+        assertNotSame(UnauthenticatedSession.EMPTY, response);
     }
 
     @Test
@@ -34,10 +34,10 @@ public class DataDownloaderServiceTest {
         String login = "";
 
         // when
-        PasswordMetadata response = this.testedService.doFirstLogInStep(login);
+        UnauthenticatedSession response = this.testedService.createUnauthenticatedSession(login);
 
         // then
-        assertSame(PasswordMetadata.EMPTY, response);
+        assertSame(UnauthenticatedSession.EMPTY, response);
     }
 
     @Test
@@ -45,11 +45,10 @@ public class DataDownloaderServiceTest {
         // given
         String login = "test";
         char[] password = "abcde".toCharArray();
-        PasswordMetadata passwordMetadata = TestHelper.SAMPLE_PASSWORD_METADATA;
+        UnauthenticatedSession unauthenticatedSession = TestHelper.SAMPLE_PASSWORD_METADATA;
 
         // when
-        AuthenticatedSession response = this.testedService.createAuthenticatedSession(login, password,
-                passwordMetadata);
+        AuthenticatedSession response = this.testedService.createAuthenticatedSession(login, password, unauthenticatedSession);
 
         // then
         assertEquals(AuthenticatedSession.EMPTY, response);
