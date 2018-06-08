@@ -1,13 +1,13 @@
 package scrapper.ing.account;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MoneyTest {
+class MoneyTest {
 
     @Test
-    public void shouldGenerateProperString() {
+    void shouldGenerateProperString() {
         // given
         Money money = new Money(12.3456, "ZIMBABWE DOLLARS $$$");
 

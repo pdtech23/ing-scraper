@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DataDownloaderService {
@@ -34,7 +35,7 @@ public class DataDownloaderService {
         this.responseDataExtractor = responseDataExtractor;
     }
 
-    public UnauthenticatedSession createUnauthenticatedSession(String login) {
+    public Optional<UnauthenticatedSession> createUnauthenticatedSession(String login) {
 
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\"},\"locale\":\"PL\"}";
         HttpPost httpPost = new HttpPost(CHECK_LOGIN_URI);
@@ -42,14 +43,14 @@ public class DataDownloaderService {
         Response response = this.executeJsonRequest(httpPost, json);
 
         if (response.isEmpty()) {
-            return UnauthenticatedSession.EMPTY;
+            return Optional.empty();
         }
 
         return this.responseDataExtractor.extractUnauthenticatedSession(response);
     }
 
-    public AuthenticatedSession createAuthenticatedSession(String login, char[] password, UnauthenticatedSession
-            unauthenticatedSession) {
+    public Optional<AuthenticatedSession> createAuthenticatedSession(String login, char[] password,
+                                                                     UnauthenticatedSession unauthenticatedSession) {
 
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\",\"pwdhash\":\"" +
                 PasswordBehaviorHandler.createPasswordHash(unauthenticatedSession, password) + "\",\"di\":\"T\"}," +
@@ -61,7 +62,7 @@ public class DataDownloaderService {
         Response responseResult = this.executeJsonRequest(httpPost, json);
 
         if (responseResult.isEmpty()) {
-            return AuthenticatedSession.EMPTY;
+            return Optional.empty();
         }
 
         return this.responseDataExtractor.extractAuthenticatedSession(responseResult);

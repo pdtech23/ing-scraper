@@ -30,7 +30,7 @@ public class PasswordBehaviorHandler {
         return HmacUtils.hmacSha1Hex(unauthenticatedSession.getKey(), saltWithPassword);
     }
 
-    public static String mixSaltAndPassword(String saltWithMask, char[] passphrase) {
+    static String mixSaltAndPassword(String saltWithMask, char[] passphrase) {
         StringBuilder result = new StringBuilder();
         int currentCharacterIndex = 0;
         for (int i = 0; i < saltWithMask.length(); ++i) {
@@ -43,7 +43,7 @@ public class PasswordBehaviorHandler {
         return result.toString();
     }
 
-    public static String createSaltWithMaskOn(UnauthenticatedSession metadata) {
+    static String createSaltWithMaskOn(UnauthenticatedSession metadata) {
         String mask = metadata.getMask();
         String salt = metadata.getSalt();
 

@@ -25,21 +25,21 @@ public class ResponseDataExtractor {
     private static final String MASK = "mask";
     private static final String KEY = "key";
 
-    public UnauthenticatedSession extractUnauthenticatedSession(Response response) {
+    public Optional<UnauthenticatedSession> extractUnauthenticatedSession(Response response) {
         try {
             JSONObject jsonBody = response.getJsonBody();
             if (!jsonBody.has(DATA_FIELD_KEY)) {
-                return UnauthenticatedSession.EMPTY;
+                return Optional.empty();
             }
             JSONObject data = response.getJsonBody().getJSONObject(DATA_FIELD_KEY);
             if (data.has(SALT) && data.has(MASK) && data.has(KEY)) {
-                return new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data.getString(KEY),
-                        this.extractSessionId(response));
+                return Optional.of(new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data
+                        .getString(KEY), this.extractSessionId(response)));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return UnauthenticatedSession.EMPTY;
+        return Optional.empty();
     }
 
     private String extractSessionToken(Response response) {
@@ -58,15 +58,15 @@ public class ResponseDataExtractor {
         return "";
     }
 
-    public AuthenticatedSession extractAuthenticatedSession(Response authenticationResponse) {
+    public Optional<AuthenticatedSession> extractAuthenticatedSession(Response authenticationResponse) {
         String token = this.extractSessionToken(authenticationResponse);
         String sessionId = this.extractSessionId(authenticationResponse);
 
         if (token.isEmpty() || sessionId.isEmpty()) {
-            return AuthenticatedSession.EMPTY;
+            return Optional.empty();
         }
 
-        return new AuthenticatedSession(token, sessionId);
+        return Optional.of(new AuthenticatedSession(token, sessionId));
     }
 
     private String extractSessionId(Response response) {

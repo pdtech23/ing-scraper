@@ -1,14 +1,14 @@
 package scrapper.ing.account;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scrapper.ing.TestHelper;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IngAccountInfoTest {
+class IngAccountInfoTest {
 
     @Test
-    public void shouldGenerateProperString() {
+    void shouldGenerateProperString() {
         // given
         IngAccountInfo info = TestHelper.SAMPLE_ACCOUNT_INFO;
 

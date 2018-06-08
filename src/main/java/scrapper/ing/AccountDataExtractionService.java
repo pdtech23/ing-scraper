@@ -28,12 +28,8 @@ class AccountDataExtractionService {
             return;
         }
 
-        UnauthenticatedSession unauthenticatedSession = this.dataDownloaderService.createUnauthenticatedSession(login);
-
-        if (unauthenticatedSession.isEmpty()) {
-            this.userInterface.displayFailureMessage();
-            return;
-        }
+        UnauthenticatedSession unauthenticatedSession = this.dataDownloaderService.createUnauthenticatedSession
+                (login).orElseThrow(() -> new RuntimeException("Cannot connect with bank"));
 
         List<Integer> positionsOfRevealedCharacters = PasswordBehaviorHandler.extractPositionsOfRevealedCharacters
                 (unauthenticatedSession.getMask());
@@ -44,13 +40,9 @@ class AccountDataExtractionService {
             return;
         }
 
-        AuthenticatedSession session = this.dataDownloaderService.createAuthenticatedSession(login, password,
-                unauthenticatedSession);
+        AuthenticatedSession authenticatedSession = this.dataDownloaderService.createAuthenticatedSession(login,
+                password, unauthenticatedSession).orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-        if (session.isEmpty()) {
-            this.userInterface.displayFailureMessage();
-        } else {
-            this.userInterface.printAccounts(this.dataDownloaderService.getAccountsInfo(session));
-        }
+        this.userInterface.printAccounts(this.dataDownloaderService.getAccountsInfo(authenticatedSession));
     }
 }

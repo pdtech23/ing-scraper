@@ -34,8 +34,4 @@ public class UnauthenticatedSession {
     public String getUnauthenticatedSessionId() {
         return this.unauthenticatedSessionId;
     }
-
-    public boolean isEmpty() {
-        return this == EMPTY;
-    }
 }

@@ -1,6 +1,6 @@
 package scrapper.ing.client;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scrapper.ing.TestHelper;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.client.response.ResponseDataExtractor;
@@ -9,49 +9,51 @@ import scrapper.ing.security.UnauthenticatedSession;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class DataDownloaderServiceTest {
+class DataDownloaderServiceTest {
 
     private final DataDownloaderService testedService = new DataDownloaderService(new ResponseDataExtractor());
 
     @Test
-    public void shouldProceedOnAnyLoginExceptEmpty() {
+    void shouldProceedOnAnyLoginExceptEmpty() {
         // given
         String login = "test";
 
         // when
-        UnauthenticatedSession response = this.testedService.createUnauthenticatedSession(login);
+        Optional<UnauthenticatedSession> response = this.testedService.createUnauthenticatedSession(login);
 
         // then
-        assertNotSame(UnauthenticatedSession.EMPTY, response);
+        assertTrue(response.isPresent());
     }
 
     @Test
-    public void shouldFailOnEmptyLogin() {
+    void shouldFailOnEmptyLogin() {
         // given
         String login = "";
 
         // when
-        UnauthenticatedSession response = this.testedService.createUnauthenticatedSession(login);
+        Optional<UnauthenticatedSession> response = this.testedService.createUnauthenticatedSession(login);
 
         // then
-        assertSame(UnauthenticatedSession.EMPTY, response);
+        assertFalse(response.isPresent());
     }
 
     @Test
-    public void shouldFailOnIncorrectLoginPasswordPair() {
+    void shouldFailOnIncorrectLoginPasswordPair() {
         // given
         String login = "test";
         char[] password = "abcde".toCharArray();
         UnauthenticatedSession unauthenticatedSession = TestHelper.SAMPLE_PASSWORD_METADATA;
 
         // when
-        AuthenticatedSession response = this.testedService.createAuthenticatedSession(login, password, unauthenticatedSession);
+        Optional<AuthenticatedSession> response = this.testedService.createAuthenticatedSession(login, password,
+                unauthenticatedSession);
 
         // then
-        assertEquals(AuthenticatedSession.EMPTY, response);
+        assertFalse(response.isPresent());
     }
 
     // due to lack of test credentials can't implement it in a meaningful way
@@ -59,7 +61,7 @@ public class DataDownloaderServiceTest {
 
 
     @Test
-    public void shouldFailWithoutAuthentication() {
+    void shouldFailWithoutAuthentication() {
         // given
         AuthenticatedSession authenticatedSession = new AuthenticatedSession("123", "abc");
 

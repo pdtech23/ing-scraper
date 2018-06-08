@@ -4,39 +4,41 @@ import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scrapper.ing.TestHelper;
 import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.UnauthenticatedSession;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ResponseDataExtractorTest {
+class ResponseDataExtractorTest {
 
     private ResponseDataExtractor testedService = new ResponseDataExtractor();
 
     @Test
-    public void shouldReturnEmptyIfIncorrectResponseData() throws JSONException {
+    void shouldReturnEmptyIfIncorrectResponseData() throws JSONException {
         // given
         Response response = new Response(new JSONObject("{}"), new Header[]{});
 
         // when
         List<IngAccountInfo> accountInfos = this.testedService.extractAccountsInfo(response);
-        AuthenticatedSession authenticatedSession = this.testedService.extractAuthenticatedSession(response);
-        UnauthenticatedSession unauthenticatedSession = this.testedService.extractUnauthenticatedSession(response);
+        Optional<AuthenticatedSession> authenticatedSession = this.testedService.extractAuthenticatedSession(response);
+        Optional<UnauthenticatedSession> unauthenticatedSession = this.testedService.extractUnauthenticatedSession
+                (response);
 
         // then
         assertTrue(accountInfos.isEmpty());
-        assertTrue(authenticatedSession.isEmpty());
-        assertTrue(unauthenticatedSession.isEmpty());
+        assertFalse(authenticatedSession.isPresent());
+        assertFalse(unauthenticatedSession.isPresent());
     }
 
     // Tests below would be way better if they could work on actual responses not mocks
     @Test
-    public void shouldReturnEmptyInfoWhenUserHasNoAccounts() throws JSONException {
+    void shouldReturnEmptyInfoWhenUserHasNoAccounts() throws JSONException {
         // given
         String jsonAsString = "{\"data\":{\"sav\":[],\"cur\":[]}}";
         Response response = new Response(new JSONObject(jsonAsString), new Header[]{});
@@ -49,7 +51,7 @@ public class ResponseDataExtractorTest {
     }
 
     @Test
-    public void shouldReturnCorrespondingAccountsInfo() throws JSONException {
+    void shouldReturnCorrespondingAccountsInfo() throws JSONException {
         // given
         String jsonAsString = "{\"data\":{\"sav\":[{\"acct\":\"1337\",\"avbal\":\"12.34\",\"name\":\"super acc\"," +
                 "\"curr\":\"PLN\"}],\"cur\":[]}}";
@@ -64,7 +66,7 @@ public class ResponseDataExtractorTest {
     }
 
     @Test
-    public void shouldReturnUnauthenticatedSessionOnCorrectResponse() throws JSONException {
+    void shouldReturnUnauthenticatedSessionOnCorrectResponse() throws JSONException {
         // given
         String sessionId = "sessionId";
         String key = "1234";
@@ -75,17 +77,20 @@ public class ResponseDataExtractorTest {
                 "JSESSIONID=" + sessionId + ";")});
 
         // when
-        UnauthenticatedSession result = this.testedService.extractUnauthenticatedSession(authenticationResponse);
+        Optional<UnauthenticatedSession> result = this.testedService.extractUnauthenticatedSession
+                (authenticationResponse);
 
         // then
-        assertEquals(sessionId, result.getUnauthenticatedSessionId());
-        assertEquals(key, result.getKey());
-        assertEquals(mask, result.getMask());
-        assertEquals(salt, result.getSalt());
+        assertTrue(result.isPresent());
+        UnauthenticatedSession resultValue = result.get();
+        assertEquals(sessionId, resultValue.getUnauthenticatedSessionId());
+        assertEquals(key, resultValue.getKey());
+        assertEquals(mask, resultValue.getMask());
+        assertEquals(salt, resultValue.getSalt());
     }
 
     @Test
-    public void shouldReturnAuthenticatedSessionOnCorrectResponse() throws JSONException {
+    void shouldReturnAuthenticatedSessionOnCorrectResponse() throws JSONException {
         // given
         String sessionId = "sessionId";
         String token = "token";
@@ -93,10 +98,12 @@ public class ResponseDataExtractorTest {
                 BasicHeader[]{new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId + ";")});
 
         // when
-        AuthenticatedSession result = this.testedService.extractAuthenticatedSession(authenticationResponse);
+        Optional<AuthenticatedSession> result = this.testedService.extractAuthenticatedSession(authenticationResponse);
 
         // then
-        assertEquals(sessionId, result.getAuthenticatedSessionId());
-        assertEquals(token, result.getToken());
+        assertTrue(result.isPresent());
+        AuthenticatedSession resultValue = result.get();
+        assertEquals(sessionId, resultValue.getAuthenticatedSessionId());
+        assertEquals(token, resultValue.getToken());
     }
 }
