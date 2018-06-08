@@ -1,6 +1,7 @@
 package scrapper.ing.client.response;
 
 import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -11,8 +12,7 @@ import scrapper.ing.security.UnauthenticatedSession;
 
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ResponseDataExtractorTest {
 
@@ -61,5 +61,42 @@ public class ResponseDataExtractorTest {
 
         // then
         assertFalse(result.contains(expected));
+    }
+
+    @Test
+    public void shouldReturnUnauthenticatedSessionOnCorrectResponse() throws JSONException {
+        // given
+        String sessionId = "sessionId";
+        String key = "1234";
+        String mask = "**++";
+        String salt = "SALT";
+        Response authenticationResponse = new Response(new JSONObject("{\"data\":{\"salt\":" + salt + "," +
+                "\"mask\":" + mask + ",\"key\":" + key + "}}"), new BasicHeader[]{new BasicHeader("Set-Cookie",
+                "JSESSIONID=" + sessionId + ";")});
+
+        // when
+        UnauthenticatedSession result = this.testedService.extractUnauthenticatedSession(authenticationResponse);
+
+        // then
+        assertEquals(sessionId, result.getUnauthenticatedSessionId());
+        assertEquals(key, result.getKey());
+        assertEquals(mask, result.getMask());
+        assertEquals(salt, result.getSalt());
+    }
+
+    @Test
+    public void shouldReturnAuthenticatedSessionOnCorrectResponse() throws JSONException {
+        // given
+        String sessionId = "sessionId";
+        String token = "token";
+        Response authenticationResponse = new Response(new JSONObject("{\"data\":{\"token\":" + token + "}}"), new
+                BasicHeader[]{new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId + ";")});
+
+        // when
+        AuthenticatedSession result = this.testedService.extractAuthenticatedSession(authenticationResponse);
+
+        // then
+        assertEquals(sessionId, result.getAuthenticatedSessionId());
+        assertEquals(token, result.getToken());
     }
 }

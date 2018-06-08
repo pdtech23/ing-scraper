@@ -13,6 +13,7 @@ import java.util.*;
 
 public class ResponseDataExtractor {
 
+    private static final String TOKEN = "token";
     private static final String DATA_FIELD_KEY = "data";
     private static final String SAV_FIELD_KEY = "sav";
     private static final String CUR_FIELD_KEY = "cur";
@@ -32,8 +33,8 @@ public class ResponseDataExtractor {
             }
             JSONObject data = response.getJsonBody().getJSONObject(DATA_FIELD_KEY);
             if (data.has(SALT) && data.has(MASK) && data.has(KEY)) {
-                return new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data.getString(KEY), this
-                        .extractSessionId(response));
+                return new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data.getString(KEY),
+                        this.extractSessionId(response));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -48,8 +49,8 @@ public class ResponseDataExtractor {
                 return "";
             }
             JSONObject data = jsonBody.getJSONObject(DATA_FIELD_KEY);
-            if (data.has("token")) {
-                return data.getString("token");
+            if (data.has(TOKEN)) {
+                return data.getString(TOKEN);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -60,9 +61,11 @@ public class ResponseDataExtractor {
     public AuthenticatedSession extractAuthenticatedSession(Response authenticationResponse) {
         String token = this.extractSessionToken(authenticationResponse);
         String sessionId = this.extractSessionId(authenticationResponse);
+
         if (token.isEmpty() || sessionId.isEmpty()) {
             return AuthenticatedSession.EMPTY;
         }
+
         return new AuthenticatedSession(token, sessionId);
     }
 
@@ -111,14 +114,14 @@ public class ResponseDataExtractor {
         for (int i = 0; i < savingAccounts.length(); i++) {
             JSONObject current = savingAccounts.getJSONObject(i);
 
-            if (!current.has(ACCOUNT_KEY) || !current.has(AVAILABLE_BALANCE_KEY) || !current.has(CURRENCY_KEY) ||
-                    !current.has(NAME_KEY)) {
-                return;
+            if (current.has(ACCOUNT_KEY) && current.has(AVAILABLE_BALANCE_KEY) && current.has(CURRENCY_KEY) &&
+                    current.has(NAME_KEY)) {
+                IngAccountInfo account = new IngAccountInfo(current.getString(ACCOUNT_KEY), new Money(current
+                        .getDouble(AVAILABLE_BALANCE_KEY), current.getString(CURRENCY_KEY)), current.getString
+                        (NAME_KEY));
+                aggregator.add(account);
             }
 
-            IngAccountInfo account = new IngAccountInfo(current.getString(ACCOUNT_KEY), new Money(current.getDouble
-                    (AVAILABLE_BALANCE_KEY), current.getString(CURRENCY_KEY)), current.getString(NAME_KEY));
-            aggregator.add(account);
         }
     }
 }
