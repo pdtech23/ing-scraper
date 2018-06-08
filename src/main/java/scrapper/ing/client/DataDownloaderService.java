@@ -71,8 +71,9 @@ public class DataDownloaderService {
     public List<IngAccountInfo> getAccountsInfo(AuthenticatedSession authenticatedSession) {
         HttpPost httpPost = new HttpPost(GET_ALL_ACCOUNTS_URI);
 
-        this.setHeadersNecessaryToPretendBrowser(authenticatedSession, httpPost);
+        this.setHeadersNecessaryToPretendBrowser(httpPost);
 
+        httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.getAuthenticatedSessionId());
         String json = "{\"token\":\"" + authenticatedSession.getToken() + "\",\"trace\":\"\",\"locale\":\"PL\"}";
         Response response = this.executeJsonRequest(httpPost, json);
 
@@ -84,8 +85,7 @@ public class DataDownloaderService {
 
     }
 
-    private void setHeadersNecessaryToPretendBrowser(AuthenticatedSession authenticatedSession, HttpPost httpPost) {
-        httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.getAuthenticatedSessionId());
+    private void setHeadersNecessaryToPretendBrowser(HttpPost httpPost) {
         httpPost.setHeader("User-Agent", "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, " +
                 "like Gecko) Ubuntu Chromium/66.0.3359.181 Chrome/66.0.3359.181 Safari/537.36");
         httpPost.setHeader("X-Wolf-Protection", "0.7616067842109708");
