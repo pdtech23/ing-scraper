@@ -40,13 +40,12 @@ public class DataDownloaderService {
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\"},\"locale\":\"PL\"}";
         HttpPost httpPost = new HttpPost(CHECK_LOGIN_URI);
 
-        Response response = this.executeJsonRequest(httpPost, json);
+        Optional<Response> response = this.executeJsonRequest(httpPost, json);
 
-        if (response.isEmpty()) {
-            return Optional.empty();
+        if (response.isPresent()) {
+            return this.responseDataExtractor.extractUnauthenticatedSession(response.get());
         }
-
-        return this.responseDataExtractor.extractUnauthenticatedSession(response);
+        return Optional.empty();
     }
 
     public Optional<AuthenticatedSession> createAuthenticatedSession(String login, char[] password,
@@ -59,13 +58,12 @@ public class DataDownloaderService {
         HttpPost httpPost = new HttpPost(LOGIN_URI);
         httpPost.setHeader("Cookie", "JSESSIONID=" + unauthenticatedSession.getUnauthenticatedSessionId());
 
-        Response responseResult = this.executeJsonRequest(httpPost, json);
+        Optional<Response> responseResult = this.executeJsonRequest(httpPost, json);
 
-        if (responseResult.isEmpty()) {
-            return Optional.empty();
+        if (responseResult.isPresent()) {
+            return this.responseDataExtractor.extractAuthenticatedSession(responseResult.get());
         }
-
-        return this.responseDataExtractor.extractAuthenticatedSession(responseResult);
+        return Optional.empty();
     }
 
 
@@ -76,13 +74,13 @@ public class DataDownloaderService {
 
         httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.getAuthenticatedSessionId());
         String json = "{\"token\":\"" + authenticatedSession.getToken() + "\",\"trace\":\"\",\"locale\":\"PL\"}";
-        Response response = this.executeJsonRequest(httpPost, json);
+        Optional<Response> response = this.executeJsonRequest(httpPost, json);
 
-        if (response.isEmpty()) {
-            return Collections.emptyList();
+        if (response.isPresent()) {
+            return this.responseDataExtractor.extractAccountsInfo(response.get());
         }
 
-        return this.responseDataExtractor.extractAccountsInfo(response);
+        return Collections.emptyList();
 
     }
 
@@ -92,17 +90,17 @@ public class DataDownloaderService {
         httpPost.setHeader("X-Wolf-Protection", "0.7616067842109708");
     }
 
-    private Response executeJsonRequest(HttpPost httpPost, String jsonBody) {
+    private Optional<Response> executeJsonRequest(HttpPost httpPost, String jsonBody) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
             httpPost.setHeader("Content-type", "application/json");
             httpPost.setEntity(new StringEntity(jsonBody));
             CloseableHttpResponse response = client.execute(httpPost);
 
-            return new Response(this.extractResponseJson(response), response.getAllHeaders());
+            return Optional.of(new Response(this.extractResponseJson(response), response.getAllHeaders()));
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            return Response.EMPTY;
+            return Optional.empty();
         }
     }
 

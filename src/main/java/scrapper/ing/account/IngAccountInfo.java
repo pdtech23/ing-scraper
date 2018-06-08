@@ -2,9 +2,9 @@ package scrapper.ing.account;
 
 public class IngAccountInfo {
 
-    private String accountNumber;
-    private Money availableBalance;
-    private String name;
+    private final String accountNumber;
+    private final Money availableBalance;
+    private final String name;
 
     public IngAccountInfo(String accountNumber, Money availableBalance, String name) {
         this.accountNumber = accountNumber;
