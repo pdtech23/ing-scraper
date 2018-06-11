@@ -56,7 +56,7 @@ public class DataDownloaderService {
                 "\"locale\":\"PL\"}";
 
         HttpPost httpPost = new HttpPost(LOGIN_URI);
-        httpPost.setHeader("Cookie", "JSESSIONID=" + unauthenticatedSession.getUnauthenticatedSessionId());
+        httpPost.setHeader("Cookie", "JSESSIONID=" + unauthenticatedSession.unauthenticatedSessionId);
 
         Optional<Response> responseResult = this.executeJsonRequest(httpPost, json);
 
@@ -72,8 +72,8 @@ public class DataDownloaderService {
 
         this.setHeadersNecessaryToPretendBrowser(httpPost);
 
-        httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.getAuthenticatedSessionId());
-        String json = "{\"token\":\"" + authenticatedSession.getToken() + "\",\"trace\":\"\",\"locale\":\"PL\"}";
+        httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.authenticatedSessionId);
+        String json = "{\"token\":\"" + authenticatedSession.token + "\",\"trace\":\"\",\"locale\":\"PL\"}";
         Optional<Response> response = this.executeJsonRequest(httpPost, json);
 
         if (response.isPresent()) {

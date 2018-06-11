@@ -27,11 +27,11 @@ public class ResponseDataExtractor {
 
     public Optional<UnauthenticatedSession> extractUnauthenticatedSession(Response response) {
         try {
-            JSONObject jsonBody = response.getJsonBody();
+            JSONObject jsonBody = response.jsonBody;
             if (!jsonBody.has(DATA_FIELD_KEY)) {
                 return Optional.empty();
             }
-            JSONObject data = response.getJsonBody().getJSONObject(DATA_FIELD_KEY);
+            JSONObject data = response.jsonBody.getJSONObject(DATA_FIELD_KEY);
             if (data.has(SALT) && data.has(MASK) && data.has(KEY)) {
                 return Optional.of(new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data
                         .getString(KEY), this.extractSessionId(response)));
@@ -44,7 +44,7 @@ public class ResponseDataExtractor {
 
     private String extractSessionToken(Response response) {
         try {
-            JSONObject jsonBody = response.getJsonBody();
+            JSONObject jsonBody = response.jsonBody;
             if (!jsonBody.has(DATA_FIELD_KEY)) {
                 return "";
             }
@@ -70,7 +70,7 @@ public class ResponseDataExtractor {
     }
 
     private String extractSessionId(Response response) {
-        Optional<Header> sessionHeader = Arrays.stream(response.getHeaders()).filter(header -> header.getName()
+        Optional<Header> sessionHeader = Arrays.stream(response.headers).filter(header -> header.getName()
                 .equals("Set-Cookie")).filter(cookieHeader -> cookieHeader.getValue().contains("JSESSIONID"))
                 .findFirst();
 
@@ -86,7 +86,7 @@ public class ResponseDataExtractor {
 
     public List<IngAccountInfo> extractAccountsInfo(Response response) {
         try {
-            JSONObject jsonBody = response.getJsonBody();
+            JSONObject jsonBody = response.jsonBody;
             if (!jsonBody.has(DATA_FIELD_KEY)) {
                 return Collections.emptyList();
             }

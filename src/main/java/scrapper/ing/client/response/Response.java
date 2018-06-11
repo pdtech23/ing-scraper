@@ -5,19 +5,11 @@ import org.json.JSONObject;
 
 public class Response {
 
-    private final JSONObject jsonBody;
-    private final Header[] headers;
+    public final JSONObject jsonBody;
+    public final Header[] headers;
 
     public Response(JSONObject jsonBody, Header[] headers) {
         this.jsonBody = jsonBody;
         this.headers = headers;
-    }
-
-    JSONObject getJsonBody() {
-        return this.jsonBody;
-    }
-
-    Header[] getHeaders() {
-        return this.headers;
     }
 }

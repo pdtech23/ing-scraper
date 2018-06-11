@@ -32,7 +32,7 @@ class AccountDataExtractionService {
                 (login).orElseThrow(() -> new RuntimeException("Cannot connect with bank"));
 
         List<Integer> positionsOfRevealedCharacters = PasswordBehaviorHandler.extractPositionsOfRevealedCharacters
-                (unauthenticatedSession.getMask());
+                (unauthenticatedSession.mask);
         char[] password = this.userInterface.askUserForNeededPasswordCharacters(positionsOfRevealedCharacters);
 
         if (password.length == 0) {

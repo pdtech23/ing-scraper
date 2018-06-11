@@ -27,7 +27,7 @@ public class PasswordBehaviorHandler {
     public static String createPasswordHash(UnauthenticatedSession unauthenticatedSession, char[] password) {
         String saltWithPassword = PasswordBehaviorHandler.mixSaltAndPassword(PasswordBehaviorHandler
                 .createSaltWithMaskOn(unauthenticatedSession), password);
-        return HmacUtils.hmacSha1Hex(unauthenticatedSession.getKey(), saltWithPassword);
+        return HmacUtils.hmacSha1Hex(unauthenticatedSession.key, saltWithPassword);
     }
 
     static String mixSaltAndPassword(String saltWithMask, char[] passphrase) {
@@ -44,8 +44,8 @@ public class PasswordBehaviorHandler {
     }
 
     static String createSaltWithMaskOn(UnauthenticatedSession metadata) {
-        String mask = metadata.getMask();
-        String salt = metadata.getSalt();
+        String mask = metadata.mask;
+        String salt = metadata.salt;
 
         if (mask.length() > salt.length()) {
             return "";

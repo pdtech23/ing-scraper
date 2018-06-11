@@ -83,10 +83,10 @@ class ResponseDataExtractorTest {
         // then
         assertTrue(result.isPresent());
         UnauthenticatedSession resultValue = result.get();
-        assertEquals(sessionId, resultValue.getUnauthenticatedSessionId());
-        assertEquals(key, resultValue.getKey());
-        assertEquals(mask, resultValue.getMask());
-        assertEquals(salt, resultValue.getSalt());
+        assertEquals(sessionId, resultValue.unauthenticatedSessionId);
+        assertEquals(key, resultValue.key);
+        assertEquals(mask, resultValue.mask);
+        assertEquals(salt, resultValue.salt);
     }
 
     @Test
@@ -103,7 +103,7 @@ class ResponseDataExtractorTest {
         // then
         assertTrue(result.isPresent());
         AuthenticatedSession resultValue = result.get();
-        assertEquals(sessionId, resultValue.getAuthenticatedSessionId());
-        assertEquals(token, resultValue.getToken());
+        assertEquals(sessionId, resultValue.authenticatedSessionId);
+        assertEquals(token, resultValue.token);
     }
 }
