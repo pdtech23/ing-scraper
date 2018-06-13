@@ -2,4 +2,4 @@
 
 mvn clean package
 
-mvn exec:java -D exec.mainClass=scrapper.ing.AppEntryPoint
+mvn exec:java -D exec.mainClass=scrapper.Main
