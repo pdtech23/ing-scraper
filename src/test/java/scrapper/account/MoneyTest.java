@@ -1,4 +1,4 @@
-package scrapper.ing.account;
+package scrapper.account;
 
 import org.junit.jupiter.api.Test;
 

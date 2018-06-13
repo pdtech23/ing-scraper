@@ -1,8 +1,8 @@
 package scrapper.ing.client;
 
 import org.junit.jupiter.api.Test;
+import scrapper.account.Account;
 import scrapper.ing.TestHelper;
-import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.client.response.ResponseDataExtractor;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.UnauthenticatedSession;
@@ -23,7 +23,7 @@ class DataDownloaderServiceTest {
         String login = "test";
 
         // when
-        Optional<UnauthenticatedSession> response = this.testedService.createUnauthenticatedSession(login);
+        Optional<UnauthenticatedSession> response = testedService.createUnauthenticatedSession(login);
 
         // then
         assertTrue(response.isPresent());
@@ -35,7 +35,7 @@ class DataDownloaderServiceTest {
         String login = "";
 
         // when
-        Optional<UnauthenticatedSession> response = this.testedService.createUnauthenticatedSession(login);
+        Optional<UnauthenticatedSession> response = testedService.createUnauthenticatedSession(login);
 
         // then
         assertFalse(response.isPresent());
@@ -49,7 +49,7 @@ class DataDownloaderServiceTest {
         UnauthenticatedSession unauthenticatedSession = TestHelper.SAMPLE_PASSWORD_METADATA;
 
         // when
-        Optional<AuthenticatedSession> response = this.testedService.createAuthenticatedSession(login, password,
+        Optional<AuthenticatedSession> response = testedService.createAuthenticatedSession(login, password,
                 unauthenticatedSession);
 
         // then
@@ -66,7 +66,7 @@ class DataDownloaderServiceTest {
         AuthenticatedSession authenticatedSession = new AuthenticatedSession("123", "abc");
 
         // when
-        List<IngAccountInfo> accountsInfo = this.testedService.getAccountsInfo(authenticatedSession);
+        List<Account> accountsInfo = testedService.getAccountsInfo(authenticatedSession);
 
         // then
         assertEquals(Collections.emptyList(), accountsInfo);

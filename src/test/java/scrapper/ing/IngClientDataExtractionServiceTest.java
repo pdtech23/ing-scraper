@@ -5,10 +5,10 @@ import mockit.Mocked;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import scrapper.ing.account.IngAccountInfo;
+import scrapper.account.Account;
 import scrapper.ing.client.DataDownloaderService;
 import scrapper.ing.security.AuthenticatedSession;
-import scrapper.ing.user.experience.ConsoleUserInterface;
+import scrapper.user.experience.ConsoleUserInterface;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.Optional;
 class IngClientDataExtractionServiceTest {
 
     private static final char[] SAMPLE_PASSWORD = {'a', 'b', 'c', 'd', 'e'};
-    private static final List<IngAccountInfo> SAMPLE_ACCOUNTS_LIST = Arrays.asList(TestHelper.SAMPLE_ACCOUNT_INFO,
+    private static final List<Account> SAMPLE_ACCOUNTS_LIST = Arrays.asList(TestHelper.SAMPLE_ACCOUNT_INFO,
             TestHelper.SAMPLE_ACCOUNT_INFO);
     private static final String SAMPLE_LOGIN = "janusz";
     private static final AuthenticatedSession SAMPLE_SESSION_DATA = new AuthenticatedSession("token", "sessionId");
@@ -33,24 +33,24 @@ class IngClientDataExtractionServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.testedService = new AccountDataExtractionService(this.userInterface, this.dataExtractor);
+        testedService = new AccountDataExtractionService(userInterface, dataExtractor);
     }
 
     @Test
     void shouldDownloadAccountDataWithUserInteraction() {
         // given
-        this.givenSomeLogin();
-        this.givenSuccessfulConnection();
-        this.givenSomePassword();
-        this.givenPasswordAndLoginBeingCorrect();
+        givenSomeLogin();
+        givenSuccessfulConnection();
+        givenSomePassword();
+        givenPasswordAndLoginBeingCorrect();
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.dataExtractor.getAccountsInfo(SAMPLE_SESSION_DATA);
-            this.result = SAMPLE_ACCOUNTS_LIST;
-            IngClientDataExtractionServiceTest.this.userInterface.printAccounts(SAMPLE_ACCOUNTS_LIST);
+            dataExtractor.getAccountsInfo(SAMPLE_SESSION_DATA);
+            result = SAMPLE_ACCOUNTS_LIST;
+            userInterface.printAccounts(SAMPLE_ACCOUNTS_LIST);
         }};
 
         // when
-        this.testedService.displayAccountDataWithUserInteraction();
+        testedService.displayAccountDataWithUserInteraction();
 
         // then
         // no exception is thrown and expectations are met
@@ -59,40 +59,40 @@ class IngClientDataExtractionServiceTest {
     @Test
     void shouldDisplayFailureMessageWhenUnableToCreateSession() {
         // given
-        this.givenSomeLogin();
-        this.givenSuccessfulConnection();
-        this.givenSomePassword();
+        givenSomeLogin();
+        givenSuccessfulConnection();
+        givenSomePassword();
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN,
+            dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN,
                     SAMPLE_PASSWORD, TestHelper.SAMPLE_PASSWORD_METADATA);
-            this.result = Optional.empty();
+            result = Optional.empty();
         }};
 
         // when & then
-        Assertions.assertThrows(RuntimeException.class, () -> this.testedService
+        Assertions.assertThrows(RuntimeException.class, () -> testedService
                 .displayAccountDataWithUserInteraction());
     }
 
     private void expectationOfFailureMessage() {
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.userInterface.displayFailureMessage();
+            userInterface.displayFailureMessage();
         }};
     }
 
     @Test
     void shouldStopWorkingOnInvalidPassword() {
         // given
-        this.givenSomeLogin();
-        this.givenSuccessfulConnection();
+        givenSomeLogin();
+        givenSuccessfulConnection();
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.userInterface.askUserForNeededPasswordCharacters
+            userInterface.askUserForNeededPasswordCharacters
                     (SAMPLE_CHARACTERS_POSITIONS);
-            this.result = new char[0];
+            result = new char[0];
         }};
-        this.expectationOfFailureMessage();
+        expectationOfFailureMessage();
 
         // when
-        this.testedService.displayAccountDataWithUserInteraction();
+        testedService.displayAccountDataWithUserInteraction();
 
         // thenS
         // no exception is thrown and expectations are met
@@ -101,14 +101,14 @@ class IngClientDataExtractionServiceTest {
     @Test
     void shouldStopWhenUnableToConnect() {
         // given
-        this.givenSomeLogin();
+        givenSomeLogin();
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.dataExtractor.createUnauthenticatedSession(this.anyString);
-            this.result = Optional.empty();
+            dataExtractor.createUnauthenticatedSession(anyString);
+            result = Optional.empty();
         }};
 
         // when & then
-        Assertions.assertThrows(RuntimeException.class, () -> this.testedService
+        Assertions.assertThrows(RuntimeException.class, () -> testedService
                 .displayAccountDataWithUserInteraction());
 
     }
@@ -117,14 +117,14 @@ class IngClientDataExtractionServiceTest {
     void shouldStopWorkingOnInvalidLogin() {
         // given
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.userInterface.displayWelcomeMessage();
-            IngClientDataExtractionServiceTest.this.userInterface.askUserForLogin();
-            this.result = "";
+            userInterface.displayWelcomeMessage();
+            userInterface.askUserForLogin();
+            result = "";
         }};
-        this.expectationOfFailureMessage();
+        expectationOfFailureMessage();
 
         // when
-        this.testedService.displayAccountDataWithUserInteraction();
+        testedService.displayAccountDataWithUserInteraction();
 
         // then
         // no exception is thrown and expectations are met
@@ -132,32 +132,32 @@ class IngClientDataExtractionServiceTest {
 
     private void givenSomeLogin() {
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.userInterface.displayWelcomeMessage();
-            IngClientDataExtractionServiceTest.this.userInterface.askUserForLogin();
-            this.result = SAMPLE_LOGIN;
+            userInterface.displayWelcomeMessage();
+            userInterface.askUserForLogin();
+            result = SAMPLE_LOGIN;
         }};
     }
 
     private void givenSuccessfulConnection() {
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.dataExtractor.createUnauthenticatedSession(this.anyString);
-            this.result = Optional.of(TestHelper.SAMPLE_PASSWORD_METADATA);
+            dataExtractor.createUnauthenticatedSession(anyString);
+            result = Optional.of(TestHelper.SAMPLE_PASSWORD_METADATA);
         }};
     }
 
     private void givenSomePassword() {
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.userInterface.askUserForNeededPasswordCharacters
+            userInterface.askUserForNeededPasswordCharacters
                     (SAMPLE_CHARACTERS_POSITIONS);
-            this.result = SAMPLE_PASSWORD;
+            result = SAMPLE_PASSWORD;
         }};
     }
 
     private void givenPasswordAndLoginBeingCorrect() {
         new Expectations() {{
-            IngClientDataExtractionServiceTest.this.dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN,
+            dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN,
                     SAMPLE_PASSWORD, TestHelper.SAMPLE_PASSWORD_METADATA);
-            this.result = Optional.of(SAMPLE_SESSION_DATA);
+            result = Optional.of(SAMPLE_SESSION_DATA);
         }};
     }
 }

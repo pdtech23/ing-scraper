@@ -1,4 +1,4 @@
-package scrapper.ing.user.experience;
+package scrapper.user.experience;
 
 import mockit.Expectations;
 import mockit.Mocked;
@@ -6,8 +6,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import scrapper.ing.account.IngAccountInfo;
-import scrapper.ing.account.Money;
+import scrapper.account.Account;
+import scrapper.account.Money;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -49,10 +49,11 @@ class ConsoleUserInterfaceTest {
     @Test
     void shouldDisplayWelcomeMessage() {
         // given
-        String expected = ConsoleUserInterface.WELCOME_MESSAGE + "\n";
+        String expected = ("Hello, we will try to get your account data here!\n(ps. we only " + "support ING Bank " +
+                "here)") + "\n";
 
         // when
-        this.testedUserInterface.displayWelcomeMessage();
+        testedUserInterface.displayWelcomeMessage();
 
         // then
         assertEquals(expected, OUT_CONTENT.toString());
@@ -61,10 +62,10 @@ class ConsoleUserInterfaceTest {
     @Test
     void shouldDisplayFailureMessage() {
         // given
-        String expected = ConsoleUserInterface.FAILED_LOGIN_ATTEMPT_MESSAGE + "\n";
+        String expected = "Failed login attempt." + "\n";
 
         // when
-        this.testedUserInterface.displayFailureMessage();
+        testedUserInterface.displayFailureMessage();
 
         // then
         assertEquals(expected, OUT_CONTENT.toString());
@@ -74,15 +75,15 @@ class ConsoleUserInterfaceTest {
     void shouldBeAbleToReadUsersLogin() throws IOException {
         // given
         new Expectations() {{
-            ConsoleUserInterfaceTest.this.inputReaderMock.readLine();
-            this.result = "janusz";
+            inputReaderMock.readLine();
+            result = "janusz";
         }};
 
         // when
-        String result = this.testedUserInterface.askUserForLogin();
+        String result = testedUserInterface.askUserForLogin();
 
         // then
-        assertEquals(ConsoleUserInterface.ASK_FOR_LOGIN_MESSAGE + "\n", OUT_CONTENT.toString());
+        assertEquals("Type in Your login please:" + "\n", OUT_CONTENT.toString());
         assertEquals("janusz", result);
     }
 
@@ -90,18 +91,18 @@ class ConsoleUserInterfaceTest {
     void shouldBeAbleToReadUsersPassword() throws IOException {
         // given
         new Expectations() {{
-            ConsoleUserInterfaceTest.this.inputReaderMock.readLine();
-            this.result = "j\n";
-            this.times = 5;
+            inputReaderMock.readLine();
+            result = "j\n";
+            times = 5;
         }};
 
         // when
-        char[] result = this.testedUserInterface.askUserForNeededPasswordCharacters(new ArrayList<>(Arrays.asList(1,
+        char[] result = testedUserInterface.askUserForNeededPasswordCharacters(new ArrayList<>(Arrays.asList(1,
                 2, 3, 4, 5)));
 
         // then
-        assertTrue(OUT_CONTENT.toString().contains(ConsoleUserInterface.PASSPHRASE_QUESTION_PREFIX));
-        assertTrue(OUT_CONTENT.toString().contains(ConsoleUserInterface.PASSPHRASE_QUESTION_POSTFIX));
+        assertTrue(OUT_CONTENT.toString().contains("Give me character no. "));
+        assertTrue(OUT_CONTENT.toString().contains(" of your password:"));
         assertTrue(Arrays.equals("jjjjj".toCharArray(), result));
     }
 
@@ -109,35 +110,34 @@ class ConsoleUserInterfaceTest {
     void shouldShouldReturnEmptyOnIncompletePassword() throws IOException {
         // given
         new Expectations() {{
-            ConsoleUserInterfaceTest.this.inputReaderMock.readLine();
-            this.result = "j";
-            this.times = 4;
-            ConsoleUserInterfaceTest.this.inputReaderMock.readLine();
-            this.result = "";
+            inputReaderMock.readLine();
+            result = "j";
+            times = 4;
+            inputReaderMock.readLine();
+            result = "";
         }};
 
         // when
-        char[] result = this.testedUserInterface.askUserForNeededPasswordCharacters(new ArrayList<>(Arrays.asList(1,
+        char[] result = testedUserInterface.askUserForNeededPasswordCharacters(new ArrayList<>(Arrays.asList(1,
                 2, 3, 4, 5)));
 
         // then
-        assertTrue(OUT_CONTENT.toString().contains(ConsoleUserInterface.PASSPHRASE_QUESTION_PREFIX));
-        assertTrue(OUT_CONTENT.toString().contains(ConsoleUserInterface.PASSPHRASE_QUESTION_POSTFIX));
+        assertTrue(OUT_CONTENT.toString().contains("Give me character no. "));
+        assertTrue(OUT_CONTENT.toString().contains(" of your password:"));
         assertEquals(0, result.length);
     }
 
     @Test
     void shouldDisplayAccounts() {
         // given
-        List<IngAccountInfo> accounts = Arrays.asList(new IngAccountInfo("12", new Money(12.12, "$"), "test"), new
-                IngAccountInfo("1337", new Money(99.99, "&"), "hehe"));
+        List<Account> accounts = Arrays.asList(new Account("12", new Money(12.12, "$"), "test"), new Account("1337",
+                new Money(99.99, "&"), "hehe"));
 
         // when
-        this.testedUserInterface.printAccounts(accounts);
+        testedUserInterface.printAccounts(accounts);
 
         // then
         assertTrue(OUT_CONTENT.toString().contains("test no. 12; available balance: 12.12 $"));
         assertTrue(OUT_CONTENT.toString().contains("hehe no. 1337; available balance: 99.99 &"));
     }
-
 }

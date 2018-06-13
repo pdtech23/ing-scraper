@@ -5,8 +5,8 @@ import org.apache.http.message.BasicHeader;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import scrapper.account.Account;
 import scrapper.ing.TestHelper;
-import scrapper.ing.account.IngAccountInfo;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.UnauthenticatedSession;
 
@@ -25,9 +25,9 @@ class ResponseDataExtractorTest {
         Response response = new Response(new JSONObject("{}"), new Header[]{});
 
         // when
-        List<IngAccountInfo> accountInfos = this.testedService.extractAccountsInfo(response);
-        Optional<AuthenticatedSession> authenticatedSession = this.testedService.extractAuthenticatedSession(response);
-        Optional<UnauthenticatedSession> unauthenticatedSession = this.testedService.extractUnauthenticatedSession
+        List<Account> accountInfos = testedService.extractAccountsInfo(response);
+        Optional<AuthenticatedSession> authenticatedSession = testedService.extractAuthenticatedSession(response);
+        Optional<UnauthenticatedSession> unauthenticatedSession = testedService.extractUnauthenticatedSession
                 (response);
 
         // then
@@ -44,7 +44,7 @@ class ResponseDataExtractorTest {
         Response response = new Response(new JSONObject(jsonAsString), new Header[]{});
 
         // when
-        List<IngAccountInfo> result = this.testedService.extractAccountsInfo(response);
+        List<Account> result = testedService.extractAccountsInfo(response);
 
         // then
         assertTrue(result.isEmpty());
@@ -56,10 +56,10 @@ class ResponseDataExtractorTest {
         String jsonAsString = "{\"data\":{\"sav\":[{\"acct\":\"1337\",\"avbal\":\"12.34\",\"name\":\"super acc\"," +
                 "\"curr\":\"PLN\"}],\"cur\":[]}}";
         Response response = new Response(new JSONObject(jsonAsString), new Header[]{});
-        IngAccountInfo expected = TestHelper.SAMPLE_ACCOUNT_INFO;
+        Account expected = TestHelper.SAMPLE_ACCOUNT_INFO;
 
         // when
-        List<IngAccountInfo> result = this.testedService.extractAccountsInfo(response);
+        List<Account> result = testedService.extractAccountsInfo(response);
 
         // then
         assertFalse(result.contains(expected));
@@ -77,7 +77,7 @@ class ResponseDataExtractorTest {
                 "JSESSIONID=" + sessionId + ";")});
 
         // when
-        Optional<UnauthenticatedSession> result = this.testedService.extractUnauthenticatedSession
+        Optional<UnauthenticatedSession> result = testedService.extractUnauthenticatedSession
                 (authenticationResponse);
 
         // then
@@ -98,7 +98,7 @@ class ResponseDataExtractorTest {
                 BasicHeader[]{new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId + ";")});
 
         // when
-        Optional<AuthenticatedSession> result = this.testedService.extractAuthenticatedSession(authenticationResponse);
+        Optional<AuthenticatedSession> result = testedService.extractAuthenticatedSession(authenticationResponse);
 
         // then
         assertTrue(result.isPresent());

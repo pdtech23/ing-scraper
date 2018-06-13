@@ -1,6 +1,6 @@
-package scrapper.ing.user.experience;
+package scrapper.user.experience;
 
-import scrapper.ing.account.IngAccountInfo;
+import scrapper.account.Account;
 import scrapper.ing.security.PasswordBehaviorHandler;
 
 import java.io.BufferedReader;
@@ -11,25 +11,18 @@ import java.util.List;
 
 public class ConsoleUserInterface {
 
-    static final String PASSPHRASE_QUESTION_PREFIX = "Give me character no. ";
-    static final String PASSPHRASE_QUESTION_POSTFIX = " of your password:";
-    static final String FAILED_LOGIN_ATTEMPT_MESSAGE = "Failed login attempt.";
-    static final String WELCOME_MESSAGE = "Hello, we will try to get your account data here!\n(ps. we only " +
-            "support ING Bank here)";
-    static final String ASK_FOR_LOGIN_MESSAGE = "Type in Your login please:";
-
-    private static final PrintStream PRINTER = System.out;
+    private static final PrintStream printer = System.out;
     private final BufferedReader userInputReader = new BufferedReader(new InputStreamReader(System.in));
 
     public void displayWelcomeMessage() {
-        PRINTER.println(WELCOME_MESSAGE);
+        printer.println("Hello, we will try to get your account data here!\n(ps. we only " + "support ING Bank here)");
     }
 
     public String askUserForLogin() {
-        PRINTER.println(ASK_FOR_LOGIN_MESSAGE);
+        printer.println("Type in Your login please:");
 
         try {
-            return this.userInputReader.readLine();
+            return userInputReader.readLine();
         } catch (IOException e) {
             e.printStackTrace();
             return "";
@@ -41,11 +34,10 @@ public class ConsoleUserInterface {
         char[] passphrase = new char[PasswordBehaviorHandler.NUMBER_OF_REVEALED_CHARACTERS];
 
         for (int i = 0; i < PasswordBehaviorHandler.NUMBER_OF_REVEALED_CHARACTERS; ++i) {
-            PRINTER.println(PASSPHRASE_QUESTION_PREFIX + positionsOfRevealedCharacters.get(i) +
-                    PASSPHRASE_QUESTION_POSTFIX);
+            printer.println("Give me character no. " + positionsOfRevealedCharacters.get(i) + " of your password:");
 
             try {
-                String input = this.userInputReader.readLine();
+                String input = userInputReader.readLine();
                 if (input.isEmpty()) {
                     return new char[0];
                 }
@@ -59,12 +51,12 @@ public class ConsoleUserInterface {
     }
 
     public void displayFailureMessage() {
-        PRINTER.println(FAILED_LOGIN_ATTEMPT_MESSAGE);
+        printer.println("Failed login attempt.");
 
     }
 
-    public void printAccounts(List<IngAccountInfo> accounts) {
-        PRINTER.println("Your accounts:");
-        accounts.forEach(PRINTER::println);
+    public void printAccounts(List<Account> accounts) {
+        printer.println("Your accounts:");
+        accounts.forEach(printer::println);
     }
 }

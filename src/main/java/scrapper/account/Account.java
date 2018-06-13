@@ -1,12 +1,12 @@
-package scrapper.ing.account;
+package scrapper.account;
 
-public class IngAccountInfo {
+public class Account {
 
     private final String accountNumber;
     private final Money availableBalance;
     private final String name;
 
-    public IngAccountInfo(String accountNumber, Money availableBalance, String name) {
+    public Account(String accountNumber, Money availableBalance, String name) {
         this.accountNumber = accountNumber;
         this.availableBalance = availableBalance;
         this.name = name;
@@ -14,6 +14,6 @@ public class IngAccountInfo {
 
     @Override
     public String toString() {
-        return "Account " + this.name + " no. " + this.accountNumber + "; available balance: " + this.availableBalance;
+        return "Account " + name + " no. " + accountNumber + "; available balance: " + availableBalance;
     }
 }

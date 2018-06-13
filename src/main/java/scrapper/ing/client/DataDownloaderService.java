@@ -8,7 +8,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONException;
 import org.json.JSONObject;
-import scrapper.ing.account.IngAccountInfo;
+import scrapper.account.Account;
 import scrapper.ing.client.response.Response;
 import scrapper.ing.client.response.ResponseDataExtractor;
 import scrapper.ing.security.AuthenticatedSession;
@@ -40,10 +40,10 @@ public class DataDownloaderService {
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\"},\"locale\":\"PL\"}";
         HttpPost httpPost = new HttpPost(CHECK_LOGIN_URI);
 
-        Optional<Response> response = this.executeJsonRequest(httpPost, json);
+        Optional<Response> response = executeJsonRequest(httpPost, json);
 
         if (response.isPresent()) {
-            return this.responseDataExtractor.extractUnauthenticatedSession(response.get());
+            return responseDataExtractor.extractUnauthenticatedSession(response.get());
         }
         return Optional.empty();
     }
@@ -58,26 +58,26 @@ public class DataDownloaderService {
         HttpPost httpPost = new HttpPost(LOGIN_URI);
         httpPost.setHeader("Cookie", "JSESSIONID=" + unauthenticatedSession.unauthenticatedSessionId);
 
-        Optional<Response> responseResult = this.executeJsonRequest(httpPost, json);
+        Optional<Response> responseResult = executeJsonRequest(httpPost, json);
 
         if (responseResult.isPresent()) {
-            return this.responseDataExtractor.extractAuthenticatedSession(responseResult.get());
+            return responseDataExtractor.extractAuthenticatedSession(responseResult.get());
         }
         return Optional.empty();
     }
 
 
-    public List<IngAccountInfo> getAccountsInfo(AuthenticatedSession authenticatedSession) {
+    public List<Account> getAccountsInfo(AuthenticatedSession authenticatedSession) {
         HttpPost httpPost = new HttpPost(GET_ALL_ACCOUNTS_URI);
 
-        this.setHeadersNecessaryToPretendBrowser(httpPost);
+        setHeadersNecessaryToPretendBrowser(httpPost);
 
         httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.authenticatedSessionId);
         String json = "{\"token\":\"" + authenticatedSession.token + "\",\"trace\":\"\",\"locale\":\"PL\"}";
-        Optional<Response> response = this.executeJsonRequest(httpPost, json);
+        Optional<Response> response = executeJsonRequest(httpPost, json);
 
         if (response.isPresent()) {
-            return this.responseDataExtractor.extractAccountsInfo(response.get());
+            return responseDataExtractor.extractAccountsInfo(response.get());
         }
 
         return Collections.emptyList();
@@ -97,7 +97,7 @@ public class DataDownloaderService {
             httpPost.setEntity(new StringEntity(jsonBody));
             CloseableHttpResponse response = client.execute(httpPost);
 
-            return Optional.of(new Response(this.extractResponseJson(response), response.getAllHeaders()));
+            return Optional.of(new Response(extractResponseJson(response), response.getAllHeaders()));
         } catch (IOException | JSONException e) {
             e.printStackTrace();
             return Optional.empty();

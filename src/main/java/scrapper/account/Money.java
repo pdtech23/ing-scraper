@@ -1,6 +1,7 @@
-package scrapper.ing.account;
+package scrapper.account;
 
 public class Money {
+    // TODO double to int
 
     private final int amount;
     private final String currency;
@@ -12,6 +13,6 @@ public class Money {
 
     @Override
     public String toString() {
-        return ((int) Math.floor(this.amount / 100.0)) + "." + this.amount % 100 + " " + this.currency;
+        return ((int) Math.floor(amount / 100.0)) + "." + amount % 100 + " " + currency;
     }
 }

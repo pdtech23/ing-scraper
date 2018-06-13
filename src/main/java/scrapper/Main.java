@@ -1,10 +1,11 @@
-package scrapper.ing;
+package scrapper;
 
+import scrapper.ing.AccountDataExtractionService;
 import scrapper.ing.client.DataDownloaderService;
 import scrapper.ing.client.response.ResponseDataExtractor;
-import scrapper.ing.user.experience.ConsoleUserInterface;
+import scrapper.user.experience.ConsoleUserInterface;
 
-public class AppEntryPoint {
+public class Main {
 
     public static void main(String[] args) {
 

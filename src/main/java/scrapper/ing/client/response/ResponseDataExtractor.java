@@ -4,8 +4,8 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import scrapper.ing.account.IngAccountInfo;
-import scrapper.ing.account.Money;
+import scrapper.account.Account;
+import scrapper.account.Money;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.UnauthenticatedSession;
 
@@ -33,8 +33,7 @@ public class ResponseDataExtractor {
             }
             JSONObject data = response.jsonBody.getJSONObject(DATA_FIELD_KEY);
             if (data.has(SALT) && data.has(MASK) && data.has(KEY)) {
-                return Optional.of(new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data
-                        .getString(KEY), this.extractSessionId(response)));
+                return Optional.of(new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data.getString(KEY), extractSessionId(response)));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -59,8 +58,8 @@ public class ResponseDataExtractor {
     }
 
     public Optional<AuthenticatedSession> extractAuthenticatedSession(Response authenticationResponse) {
-        String token = this.extractSessionToken(authenticationResponse);
-        String sessionId = this.extractSessionId(authenticationResponse);
+        String token = extractSessionToken(authenticationResponse);
+        String sessionId = extractSessionId(authenticationResponse);
 
         if (token.isEmpty() || sessionId.isEmpty()) {
             return Optional.empty();
@@ -70,9 +69,8 @@ public class ResponseDataExtractor {
     }
 
     private String extractSessionId(Response response) {
-        Optional<Header> sessionHeader = Arrays.stream(response.headers).filter(header -> header.getName()
-                .equals("Set-Cookie")).filter(cookieHeader -> cookieHeader.getValue().contains("JSESSIONID"))
-                .findFirst();
+        Optional<Header> sessionHeader = Arrays.stream(response.headers).filter(header -> header.getName().equals
+                ("Set-Cookie")).filter(cookieHeader -> cookieHeader.getValue().contains("JSESSIONID")).findFirst();
 
         if (!sessionHeader.isPresent()) {
             return "";
@@ -84,7 +82,7 @@ public class ResponseDataExtractor {
         return header.substring(i, j);
     }
 
-    public List<IngAccountInfo> extractAccountsInfo(Response response) {
+    public List<Account> extractAccountsInfo(Response response) {
         try {
             JSONObject jsonBody = response.jsonBody;
             if (!jsonBody.has(DATA_FIELD_KEY)) {
@@ -99,9 +97,9 @@ public class ResponseDataExtractor {
             JSONArray savingAccounts = accounts.getJSONArray(SAV_FIELD_KEY);
             JSONArray currentAccounts = accounts.getJSONArray(CUR_FIELD_KEY);
 
-            List<IngAccountInfo> result = new ArrayList<>();
-            this.addAccounts(result, savingAccounts);
-            this.addAccounts(result, currentAccounts);
+            List<Account> result = new ArrayList<>();
+            addAccounts(result, savingAccounts);
+            addAccounts(result, currentAccounts);
 
             return result;
         } catch (JSONException e) {
@@ -110,19 +108,17 @@ public class ResponseDataExtractor {
         }
     }
 
-    private void addAccounts(List<IngAccountInfo> aggregator, JSONArray savingAccounts) throws JSONException {
+    private void addAccounts(List<Account> aggregator, JSONArray savingAccounts) throws JSONException {
         for (int i = 0; i < savingAccounts.length(); i++) {
             JSONObject current = savingAccounts.getJSONObject(i);
 
             if (current.has(ACCOUNT_KEY) && current.has(AVAILABLE_BALANCE_KEY) && current.has(CURRENCY_KEY) &&
                     current.has(NAME_KEY)) {
-                IngAccountInfo account = new IngAccountInfo(current.getString(ACCOUNT_KEY), new Money(current
-                        .getDouble(AVAILABLE_BALANCE_KEY), current.getString(CURRENCY_KEY)), current.getString
-                        (NAME_KEY));
+                Account account = new Account(current.getString(ACCOUNT_KEY), new Money(current.getDouble
+                        (AVAILABLE_BALANCE_KEY), current.getString(CURRENCY_KEY)), current.getString(NAME_KEY));
                 aggregator.add(account);
             }
 
         }
     }
 }
-
