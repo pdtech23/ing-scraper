@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import scrapper.account.Account;
 import scrapper.ing.client.response.Response;
-import scrapper.ing.client.response.ResponseDataExtractor;
+import scrapper.ing.client.response.ResponseHandler;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordBehaviorHandler;
 import scrapper.ing.security.UnauthenticatedSession;
@@ -23,16 +23,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class DataDownloaderService {
+public class DownloadDataClient {
     private static final String ING_REST_ENDPOINT_URI = "https://login.ingbank.pl/mojeing/rest";
     private static final String CHECK_LOGIN_URI = ING_REST_ENDPOINT_URI + "/renchecklogin";
     private static final String GET_ALL_ACCOUNTS_URI = ING_REST_ENDPOINT_URI + "/rengetallaccounts";
     private static final String LOGIN_URI = ING_REST_ENDPOINT_URI + "/renlogin";
 
-    private ResponseDataExtractor responseDataExtractor;
+    private ResponseHandler responseHandler;
 
-    public DataDownloaderService(ResponseDataExtractor responseDataExtractor) {
-        this.responseDataExtractor = responseDataExtractor;
+    public DownloadDataClient(ResponseHandler responseHandler) {
+        this.responseHandler = responseHandler;
     }
 
     public Optional<UnauthenticatedSession> createUnauthenticatedSession(String login) {
@@ -43,7 +43,7 @@ public class DataDownloaderService {
         Optional<Response> response = executeJsonRequest(httpPost, json);
 
         if (response.isPresent()) {
-            return responseDataExtractor.extractUnauthenticatedSession(response.get());
+            return responseHandler.extractUnauthenticatedSession(response.get());
         }
         return Optional.empty();
     }
@@ -61,7 +61,7 @@ public class DataDownloaderService {
         Optional<Response> responseResult = executeJsonRequest(httpPost, json);
 
         if (responseResult.isPresent()) {
-            return responseDataExtractor.extractAuthenticatedSession(responseResult.get());
+            return responseHandler.extractAuthenticatedSession(responseResult.get());
         }
         return Optional.empty();
     }
@@ -77,7 +77,7 @@ public class DataDownloaderService {
         Optional<Response> response = executeJsonRequest(httpPost, json);
 
         if (response.isPresent()) {
-            return responseDataExtractor.extractAccountsInfo(response.get());
+            return responseHandler.extractAccountsInfo(response.get());
         }
 
         return Collections.emptyList();

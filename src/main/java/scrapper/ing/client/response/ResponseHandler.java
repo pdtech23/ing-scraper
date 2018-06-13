@@ -11,7 +11,7 @@ import scrapper.ing.security.UnauthenticatedSession;
 
 import java.util.*;
 
-public class ResponseDataExtractor {
+public class ResponseHandler {
 
     private static final String TOKEN = "token";
     private static final String DATA_FIELD_KEY = "data";
@@ -33,7 +33,8 @@ public class ResponseDataExtractor {
             }
             JSONObject data = response.jsonBody.getJSONObject(DATA_FIELD_KEY);
             if (data.has(SALT) && data.has(MASK) && data.has(KEY)) {
-                return Optional.of(new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data.getString(KEY), extractSessionId(response)));
+                return Optional.of(new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data
+                        .getString(KEY), extractSessionId(response)));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -114,7 +115,7 @@ public class ResponseDataExtractor {
 
             if (current.has(ACCOUNT_KEY) && current.has(AVAILABLE_BALANCE_KEY) && current.has(CURRENCY_KEY) &&
                     current.has(NAME_KEY)) {
-                Account account = new Account(current.getString(ACCOUNT_KEY), new Money(current.getDouble
+                Account account = new Account(current.getString(ACCOUNT_KEY), new Money(current.getString
                         (AVAILABLE_BALANCE_KEY), current.getString(CURRENCY_KEY)), current.getString(NAME_KEY));
                 aggregator.add(account);
             }

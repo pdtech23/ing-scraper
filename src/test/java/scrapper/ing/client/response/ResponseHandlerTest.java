@@ -15,9 +15,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ResponseDataExtractorTest {
+class ResponseHandlerTest {
 
-    private ResponseDataExtractor testedService = new ResponseDataExtractor();
+    private ResponseHandler testedService = new ResponseHandler();
 
     @Test
     void shouldReturnEmptyIfIncorrectResponseData() throws JSONException {
@@ -27,8 +27,7 @@ class ResponseDataExtractorTest {
         // when
         List<Account> accountInfos = testedService.extractAccountsInfo(response);
         Optional<AuthenticatedSession> authenticatedSession = testedService.extractAuthenticatedSession(response);
-        Optional<UnauthenticatedSession> unauthenticatedSession = testedService.extractUnauthenticatedSession
-                (response);
+        Optional<UnauthenticatedSession> unauthenticatedSession = testedService.extractUnauthenticatedSession(response);
 
         // then
         assertTrue(accountInfos.isEmpty());
@@ -77,8 +76,7 @@ class ResponseDataExtractorTest {
                 "JSESSIONID=" + sessionId + ";")});
 
         // when
-        Optional<UnauthenticatedSession> result = testedService.extractUnauthenticatedSession
-                (authenticationResponse);
+        Optional<UnauthenticatedSession> result = testedService.extractUnauthenticatedSession(authenticationResponse);
 
         // then
         assertTrue(result.isPresent());

@@ -1,18 +1,19 @@
 package scrapper.account;
 
-public class Money {
-    // TODO double to int
+import java.math.BigDecimal;
 
-    private final int amount;
+public class Money {
+
+    private final BigDecimal amount;
     private final String currency;
 
-    public Money(double amount, String currency) {
-        this.amount = (int) Math.floor(amount * 100);
+    public Money(String amount, String currency) {
+        this.amount = new BigDecimal(amount);
         this.currency = currency;
     }
 
     @Override
     public String toString() {
-        return ((int) Math.floor(amount / 100.0)) + "." + amount % 100 + " " + currency;
+        return (amount.toPlainString() + " " + currency);
     }
 }

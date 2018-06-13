@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import scrapper.account.Account;
-import scrapper.ing.client.DataDownloaderService;
+import scrapper.ing.client.DownloadDataClient;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.user.experience.ConsoleUserInterface;
 
@@ -24,16 +24,16 @@ class IngClientDataExtractionServiceTest {
     private static final AuthenticatedSession SAMPLE_SESSION_DATA = new AuthenticatedSession("token", "sessionId");
     private static final List<Integer> SAMPLE_CHARACTERS_POSITIONS = Arrays.asList(1, 2, 3, 4, 5);
 
-    private AccountDataExtractionService testedService;
+    private PresentAccounts testedService;
 
     @Mocked
     private ConsoleUserInterface userInterface;
     @Mocked
-    private DataDownloaderService dataExtractor;
+    private DownloadDataClient dataExtractor;
 
     @BeforeEach
     void setUp() {
-        testedService = new AccountDataExtractionService(userInterface, dataExtractor);
+        testedService = new PresentAccounts(userInterface, dataExtractor);
     }
 
     @Test
@@ -63,20 +63,13 @@ class IngClientDataExtractionServiceTest {
         givenSuccessfulConnection();
         givenSomePassword();
         new Expectations() {{
-            dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN,
-                    SAMPLE_PASSWORD, TestHelper.SAMPLE_PASSWORD_METADATA);
+            dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN, SAMPLE_PASSWORD, TestHelper
+                    .SAMPLE_PASSWORD_METADATA);
             result = Optional.empty();
         }};
 
         // when & then
-        Assertions.assertThrows(RuntimeException.class, () -> testedService
-                .displayAccountDataWithUserInteraction());
-    }
-
-    private void expectationOfFailureMessage() {
-        new Expectations() {{
-            userInterface.displayFailureMessage();
-        }};
+        Assertions.assertThrows(RuntimeException.class, () -> testedService.displayAccountDataWithUserInteraction());
     }
 
     @Test
@@ -85,17 +78,12 @@ class IngClientDataExtractionServiceTest {
         givenSomeLogin();
         givenSuccessfulConnection();
         new Expectations() {{
-            userInterface.askUserForNeededPasswordCharacters
-                    (SAMPLE_CHARACTERS_POSITIONS);
+            userInterface.askUserForNeededPasswordCharacters(SAMPLE_CHARACTERS_POSITIONS);
             result = new char[0];
         }};
-        expectationOfFailureMessage();
 
-        // when
-        testedService.displayAccountDataWithUserInteraction();
-
-        // thenS
-        // no exception is thrown and expectations are met
+        // when & then
+        Assertions.assertThrows(RuntimeException.class, () -> testedService.displayAccountDataWithUserInteraction());
     }
 
     @Test
@@ -108,8 +96,7 @@ class IngClientDataExtractionServiceTest {
         }};
 
         // when & then
-        Assertions.assertThrows(RuntimeException.class, () -> testedService
-                .displayAccountDataWithUserInteraction());
+        Assertions.assertThrows(RuntimeException.class, () -> testedService.displayAccountDataWithUserInteraction());
 
     }
 
@@ -121,13 +108,9 @@ class IngClientDataExtractionServiceTest {
             userInterface.askUserForLogin();
             result = "";
         }};
-        expectationOfFailureMessage();
 
-        // when
-        testedService.displayAccountDataWithUserInteraction();
-
-        // then
-        // no exception is thrown and expectations are met
+        // when & then
+        Assertions.assertThrows(RuntimeException.class, () -> testedService.displayAccountDataWithUserInteraction());
     }
 
     private void givenSomeLogin() {
@@ -147,16 +130,15 @@ class IngClientDataExtractionServiceTest {
 
     private void givenSomePassword() {
         new Expectations() {{
-            userInterface.askUserForNeededPasswordCharacters
-                    (SAMPLE_CHARACTERS_POSITIONS);
+            userInterface.askUserForNeededPasswordCharacters(SAMPLE_CHARACTERS_POSITIONS);
             result = SAMPLE_PASSWORD;
         }};
     }
 
     private void givenPasswordAndLoginBeingCorrect() {
         new Expectations() {{
-            dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN,
-                    SAMPLE_PASSWORD, TestHelper.SAMPLE_PASSWORD_METADATA);
+            dataExtractor.createAuthenticatedSession(SAMPLE_LOGIN, SAMPLE_PASSWORD, TestHelper
+                    .SAMPLE_PASSWORD_METADATA);
             result = Optional.of(SAMPLE_SESSION_DATA);
         }};
     }

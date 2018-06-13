@@ -3,7 +3,7 @@ package scrapper.ing.client;
 import org.junit.jupiter.api.Test;
 import scrapper.account.Account;
 import scrapper.ing.TestHelper;
-import scrapper.ing.client.response.ResponseDataExtractor;
+import scrapper.ing.client.response.ResponseHandler;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.UnauthenticatedSession;
 
@@ -13,9 +13,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DataDownloaderServiceTest {
+class DownloadDataClientTest {
 
-    private final DataDownloaderService testedService = new DataDownloaderService(new ResponseDataExtractor());
+    private final DownloadDataClient testedService = new DownloadDataClient(new ResponseHandler());
 
     @Test
     void shouldProceedOnAnyLoginExceptEmpty() {

@@ -1,8 +1,8 @@
 package scrapper;
 
-import scrapper.ing.AccountDataExtractionService;
-import scrapper.ing.client.DataDownloaderService;
-import scrapper.ing.client.response.ResponseDataExtractor;
+import scrapper.ing.PresentAccounts;
+import scrapper.ing.client.DownloadDataClient;
+import scrapper.ing.client.response.ResponseHandler;
 import scrapper.user.experience.ConsoleUserInterface;
 
 public class Main {
@@ -11,10 +11,10 @@ public class Main {
 
         ConsoleUserInterface ui = new ConsoleUserInterface();
 
-        ResponseDataExtractor extractor = new ResponseDataExtractor();
-        DataDownloaderService dataProvider = new DataDownloaderService(extractor);
+        ResponseHandler extractor = new ResponseHandler();
+        DownloadDataClient downloader = new DownloadDataClient(extractor);
 
-        AccountDataExtractionService scrapper = new AccountDataExtractionService(ui, dataProvider);
+        PresentAccounts scrapper = new PresentAccounts(ui, downloader);
 
         scrapper.displayAccountDataWithUserInteraction();
     }
