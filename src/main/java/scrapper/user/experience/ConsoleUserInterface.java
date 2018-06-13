@@ -20,7 +20,6 @@ public class ConsoleUserInterface {
 
   public String askUserForLogin() {
     PRINTER.println("Type in Your login please:");
-
     try {
       return userInputReader.readLine();
     } catch (IOException e) {
@@ -30,12 +29,9 @@ public class ConsoleUserInterface {
   }
 
   public char[] askUserForNeededPasswordCharacters(List<Integer> positionsOfRevealedCharacters) {
-
     char[] passphrase = new char[PasswordBehaviorHandler.NUMBER_OF_REVEALED_CHARACTERS];
-
     for (int i = 0; i < PasswordBehaviorHandler.NUMBER_OF_REVEALED_CHARACTERS; ++i) {
       PRINTER.println("Give me character no. " + positionsOfRevealedCharacters.get(i) + " of your password:");
-
       String failureMessage = "Failed user password reading.";
       try {
         String input = userInputReader.readLine();

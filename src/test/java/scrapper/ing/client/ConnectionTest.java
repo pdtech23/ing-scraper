@@ -15,10 +15,8 @@ class ConnectionTest {
   void shouldProceedOnAnyNonEmptyLogin() {
     // given
     String login = "test";
-
     // when
     testedService.createUnauthenticatedSession(login);
-
     // then
     // no exception is thrown
   }
@@ -27,7 +25,6 @@ class ConnectionTest {
   void shouldFailOnEmptyLogin() {
     // given
     String login = "";
-
     // when & then
     Assertions.assertThrows(RuntimeException.class, () -> testedService.createUnauthenticatedSession(login));
   }
@@ -38,7 +35,6 @@ class ConnectionTest {
     String login = "test";
     char[] password = "abcde".toCharArray();
     UnauthenticatedSession unauthenticatedSession = TestHelper.SAMPLE_UNAUTHENTICATED_SESSION;
-
     // when & then
     Assertions.assertThrows(RuntimeException.class, () -> testedService.createAuthenticatedSession(login, password,
         unauthenticatedSession));
@@ -52,7 +48,6 @@ class ConnectionTest {
   void shouldFailWithoutAuthentication() {
     // given
     AuthenticatedSession authenticatedSession = new AuthenticatedSession("123", "abc");
-
     // when & then
     Assertions.assertThrows(RuntimeException.class, () -> testedService.getAccountsInfo(authenticatedSession));
   }

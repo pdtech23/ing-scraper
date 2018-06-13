@@ -10,10 +10,8 @@ class MoneyTest {
   void shouldGenerateProperString() {
     // given
     Money money = new Money("12.3456", "ZIMBABWE DOLLARS $$$");
-
     // when
     String result = money.toString();
-
     // then
     assertEquals("12.3456 ZIMBABWE DOLLARS $$$", result);
   }

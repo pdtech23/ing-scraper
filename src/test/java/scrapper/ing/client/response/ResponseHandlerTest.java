@@ -23,7 +23,6 @@ class ResponseHandlerTest {
   void shouldReturnFailIfIncorrectResponseData() throws JSONException {
     // given
     Response response = new Response(new JSONObject("{}"), new Header[]{});
-
     // when & then
     Assertions.assertThrows(RuntimeException.class, () -> testedService.extractAccountsInfo(response));
     Assertions.assertThrows(RuntimeException.class, () -> testedService.extractAuthenticatedSession(response));
@@ -36,10 +35,8 @@ class ResponseHandlerTest {
     // given
     String jsonAsString = "{\"data\":{\"sav\":[],\"cur\":[]}}";
     Response response = new Response(new JSONObject(jsonAsString), new Header[]{});
-
     // when
     List<Account> result = testedService.extractAccountsInfo(response);
-
     // then
     assertTrue(result.isEmpty());
   }
@@ -51,10 +48,8 @@ class ResponseHandlerTest {
         "\"curr\":\"PLN\"}],\"cur\":[]}}";
     Response response = new Response(new JSONObject(jsonAsString), new Header[]{});
     Account expected = TestHelper.SAMPLE_ACCOUNT_INFO;
-
     // when
     List<Account> result = testedService.extractAccountsInfo(response);
-
     // then
     assertFalse(result.contains(expected));
   }
@@ -69,10 +64,8 @@ class ResponseHandlerTest {
     Response authenticationResponse = new Response(new JSONObject("{\"data\":{\"salt\":" + salt + "," + "\"mask\":" +
         mask + ",\"key\":" + key + "}}"), new BasicHeader[]{new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId +
         ";")});
-
     // when
     UnauthenticatedSession result = testedService.extractUnauthenticatedSession(authenticationResponse);
-
     // then
     assertEquals(sessionId, result.unauthenticatedSessionId);
     assertEquals(key, result.key);
@@ -87,10 +80,8 @@ class ResponseHandlerTest {
     String token = "token";
     Response authenticationResponse = new Response(new JSONObject("{\"data\":{\"token\":" + token + "}}"), new
         BasicHeader[]{new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId + ";")});
-
     // when
     AuthenticatedSession result = testedService.extractAuthenticatedSession(authenticationResponse);
-
     // then
     assertEquals(sessionId, result.authenticatedSessionId);
     assertEquals(token, result.token);

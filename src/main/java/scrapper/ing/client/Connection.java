@@ -34,40 +34,30 @@ public class Connection {
   }
 
   public UnauthenticatedSession createUnauthenticatedSession(String login) {
-
     String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\"},\"locale\":\"PL\"}";
     HttpPost httpPost = new HttpPost(CHECK_LOGIN_URI);
-
     Response response = executeJsonRequest(httpPost, json);
-
     return responseHandler.extractUnauthenticatedSession(response);
   }
 
   public AuthenticatedSession createAuthenticatedSession(String login, char[] password, UnauthenticatedSession
       unauthenticatedSession) {
-
     String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\",\"pwdhash\":\"" +
         PasswordBehaviorHandler.createPasswordHash(unauthenticatedSession, password) + "\",\"di\":\"T\"}," +
         "\"locale\":\"PL\"}";
-
     HttpPost httpPost = new HttpPost(LOGIN_URI);
     httpPost.setHeader("Cookie", "JSESSIONID=" + unauthenticatedSession.unauthenticatedSessionId);
-
     Response responseResult = executeJsonRequest(httpPost, json);
-
     return responseHandler.extractAuthenticatedSession(responseResult);
   }
 
 
   public List<Account> getAccountsInfo(AuthenticatedSession authenticatedSession) {
     HttpPost httpPost = new HttpPost(GET_ALL_ACCOUNTS_URI);
-
     setHeadersNecessaryToPretendBrowser(httpPost);
-
     httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.authenticatedSessionId);
     String json = "{\"token\":\"" + authenticatedSession.token + "\",\"trace\":\"\",\"locale\":\"PL\"}";
     Response response = executeJsonRequest(httpPost, json);
-
     return responseHandler.extractAccountsInfo(response);
   }
 
@@ -79,11 +69,9 @@ public class Connection {
 
   private Response executeJsonRequest(HttpPost httpPost, String jsonBody) {
     try (CloseableHttpClient client = HttpClients.createDefault()) {
-
       httpPost.setHeader("Content-type", "application/json");
       httpPost.setEntity(new StringEntity(jsonBody));
       CloseableHttpResponse response = client.execute(httpPost);
-
       return new Response(extractResponseJson(response), response.getAllHeaders());
     } catch (IOException | JSONException e) {
       e.printStackTrace();

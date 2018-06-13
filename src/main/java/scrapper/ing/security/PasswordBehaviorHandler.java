@@ -46,11 +46,9 @@ public class PasswordBehaviorHandler {
   static String createSaltWithMaskOn(UnauthenticatedSession unauthenticatedSession) {
     String mask = unauthenticatedSession.mask;
     String salt = unauthenticatedSession.salt;
-
     if (mask.length() > salt.length()) {
-      return "";
+      throw new RuntimeException("Invalid mask and salt length.");
     }
-
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < mask.length(); i++) {
       if (mask.charAt(i) == MARKER) {

@@ -20,19 +20,13 @@ public class PresentAccounts {
 
   public void displayAccountsWithUserInteraction() {
     userInterface.displayWelcomeMessage();
-
     String login = userInterface.askUserForLogin();
-
     UnauthenticatedSession unauthenticatedSession = connection.createUnauthenticatedSession(login);
-
     List<Integer> positionsOfRevealedCharacters = PasswordBehaviorHandler.extractPositionsOfRevealedCharacters
         (unauthenticatedSession.mask);
-
     char[] password = userInterface.askUserForNeededPasswordCharacters(positionsOfRevealedCharacters);
-
     AuthenticatedSession authenticatedSession = connection.createAuthenticatedSession(login, password,
         unauthenticatedSession);
-
     userInterface.printAccounts(connection.getAccountsInfo(authenticatedSession));
   }
 }

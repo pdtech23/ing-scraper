@@ -8,14 +8,10 @@ import scrapper.user.experience.ConsoleUserInterface;
 public class Main {
 
   public static void main(String[] args) {
-
     ConsoleUserInterface ui = new ConsoleUserInterface();
-
     ResponseHandler extractor = new ResponseHandler();
     Connection downloader = new Connection(extractor);
-
     PresentAccounts scrapper = new PresentAccounts(ui, downloader);
-
     scrapper.displayAccountsWithUserInteraction();
   }
 

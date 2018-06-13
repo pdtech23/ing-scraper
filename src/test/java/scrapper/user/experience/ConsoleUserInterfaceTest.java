@@ -28,10 +28,8 @@ class ConsoleUserInterfaceTest {
       inputReaderMock.readLine();
       result = "janusz";
     }};
-
     // when
     String result = testedUserInterface.askUserForLogin();
-
     // then
     assertEquals("janusz", result);
   }
@@ -45,10 +43,8 @@ class ConsoleUserInterfaceTest {
       result = "j\n";
       times = 5;
     }};
-
     // when
     char[] result = testedUserInterface.askUserForNeededPasswordCharacters(positionsOfRevealedCharacters);
-
     // then
     assertTrue(Arrays.equals("jjjjj".toCharArray(), result));
   }
@@ -64,7 +60,6 @@ class ConsoleUserInterfaceTest {
       inputReaderMock.readLine();
       result = "";
     }};
-
     // when & then
     Assertions.assertThrows(RuntimeException.class, () -> testedUserInterface.askUserForNeededPasswordCharacters
         (positionsOfRevealedCharacters));

@@ -42,11 +42,9 @@ public class ResponseHandler {
   public AuthenticatedSession extractAuthenticatedSession(Response authenticationResponse) {
     String token = extractSessionToken(authenticationResponse);
     String sessionId = extractSessionId(authenticationResponse);
-
     if (token.isEmpty() || sessionId.isEmpty()) {
       throw new RuntimeException("Missing data for creation of authenticated session.");
     }
-
     return new AuthenticatedSession(token, sessionId);
   }
 
@@ -54,7 +52,6 @@ public class ResponseHandler {
     Header sessionHeader = Arrays.stream(response.headers).filter(header -> header.getName().equals("Set-Cookie"))
         .filter(cookieHeader -> cookieHeader.getValue().contains("JSESSIONID")).findFirst().orElseThrow(() -> new
             RuntimeException("Missing session data in response - incorrect password."));
-
     String header = sessionHeader.getValue();
     int i = header.indexOf('=') + 1;
     int j = header.indexOf(';');
@@ -88,19 +85,15 @@ public class ResponseHandler {
       if (!jsonBody.has(DATA_FIELD_KEY)) {
         throw new RuntimeException(failureMessage);
       }
-
       JSONObject accounts = jsonBody.getJSONObject(DATA_FIELD_KEY);
       if (!accounts.has(savingAccountsFieldKey) || !accounts.has(currentAccountsFieldKey)) {
         throw new RuntimeException(failureMessage);
       }
-
       JSONArray savingAccounts = accounts.getJSONArray(savingAccountsFieldKey);
       JSONArray currentAccounts = accounts.getJSONArray(currentAccountsFieldKey);
-
       List<Account> result = new ArrayList<>();
       addAccounts(result, savingAccounts);
       addAccounts(result, currentAccounts);
-
       return result;
     } catch (JSONException e) {
       e.printStackTrace();

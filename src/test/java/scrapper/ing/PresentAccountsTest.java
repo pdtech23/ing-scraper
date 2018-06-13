@@ -42,10 +42,8 @@ class PresentAccountsTest {
     givenSomePassword();
     givenPasswordAndLoginBeingCorrect();
     givenUserHavingAccounts();
-
     // when
     testedService.displayAccountsWithUserInteraction();
-
     // then
     // no exception is thrown and expectations are met
   }
