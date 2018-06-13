@@ -42,10 +42,10 @@ class PasswordBehaviorHandlerTest {
         // given
         String sampleSalt = "Gj1Uit0gyxKitJlqguphPHqKFH3DEkJ7";
         String sampleMask = "**+**+*+++++++++++++++++++++++++";
-        UnauthenticatedSession metadata = new UnauthenticatedSession(sampleSalt, sampleMask, "", "");
+        UnauthenticatedSession unauthenticatedSession = new UnauthenticatedSession(sampleSalt, sampleMask, "", "");
 
         // when
-        String result = PasswordBehaviorHandler.createSaltWithMaskOn(metadata);
+        String result = PasswordBehaviorHandler.createSaltWithMaskOn(unauthenticatedSession);
 
         // then
         assertEquals("**1**t*gyxKitJlqguphPHqKFH3DEkJ7", result);
@@ -56,10 +56,10 @@ class PasswordBehaviorHandlerTest {
         // given
         String sampleSalt = "Gj1Uit0gyxKitJlqguph3DEkJ7";
         String sampleMask = "*+*++*+++*++++*+++++++++++++++++";
-        UnauthenticatedSession metadata = new UnauthenticatedSession(sampleSalt, sampleMask, "", "");
+        UnauthenticatedSession unauthenticatedSession = new UnauthenticatedSession(sampleSalt, sampleMask, "", "");
 
         // when
-        String result = PasswordBehaviorHandler.createSaltWithMaskOn(metadata);
+        String result = PasswordBehaviorHandler.createSaltWithMaskOn(unauthenticatedSession);
 
         // then
         assertEquals("", result);
@@ -71,10 +71,11 @@ class PasswordBehaviorHandlerTest {
         String sampleSalt = "tk0XpsU5dAShJjJ5BS6nOnymXfCBRuSj";
         String sampleMask = "**++*++*+*++++++++++++++++++++++";
         String sampleKey = "75804255617903534713114162762950";
-        UnauthenticatedSession metadata = new UnauthenticatedSession(sampleSalt, sampleMask, sampleKey, "");
+        UnauthenticatedSession unauthenticatedSession = new UnauthenticatedSession(sampleSalt, sampleMask, sampleKey,
+                "");
 
         // when
-        String maskOnSalt = PasswordBehaviorHandler.createSaltWithMaskOn(metadata);
+        String maskOnSalt = PasswordBehaviorHandler.createSaltWithMaskOn(unauthenticatedSession);
         String mixOfSaltAndPassword = PasswordBehaviorHandler.mixSaltAndPassword(maskOnSalt, new char[]{'A', 'g',
                 'c', '#', '7'});
         String pwdHash = HmacUtils.hmacSha1Hex(sampleKey, mixOfSaltAndPassword);

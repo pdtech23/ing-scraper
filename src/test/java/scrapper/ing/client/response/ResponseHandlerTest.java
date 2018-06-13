@@ -4,6 +4,7 @@ import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import scrapper.account.Account;
 import scrapper.ing.TestHelper;
@@ -11,7 +12,6 @@ import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.UnauthenticatedSession;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,19 +20,14 @@ class ResponseHandlerTest {
     private ResponseHandler testedService = new ResponseHandler();
 
     @Test
-    void shouldReturnEmptyIfIncorrectResponseData() throws JSONException {
+    void shouldReturnFailIfIncorrectResponseData() throws JSONException {
         // given
         Response response = new Response(new JSONObject("{}"), new Header[]{});
 
-        // when
-        List<Account> accountInfos = testedService.extractAccountsInfo(response);
-        Optional<AuthenticatedSession> authenticatedSession = testedService.extractAuthenticatedSession(response);
-        Optional<UnauthenticatedSession> unauthenticatedSession = testedService.extractUnauthenticatedSession(response);
-
-        // then
-        assertTrue(accountInfos.isEmpty());
-        assertFalse(authenticatedSession.isPresent());
-        assertFalse(unauthenticatedSession.isPresent());
+        // when & then
+        Assertions.assertThrows(RuntimeException.class, () -> testedService.extractAccountsInfo(response));
+        Assertions.assertThrows(RuntimeException.class, () -> testedService.extractAuthenticatedSession(response));
+        Assertions.assertThrows(RuntimeException.class, () -> testedService.extractUnauthenticatedSession(response));
     }
 
     // Tests below would be way better if they could work on actual responses not mocks
@@ -76,15 +71,13 @@ class ResponseHandlerTest {
                 "JSESSIONID=" + sessionId + ";")});
 
         // when
-        Optional<UnauthenticatedSession> result = testedService.extractUnauthenticatedSession(authenticationResponse);
+        UnauthenticatedSession result = testedService.extractUnauthenticatedSession(authenticationResponse);
 
         // then
-        assertTrue(result.isPresent());
-        UnauthenticatedSession resultValue = result.get();
-        assertEquals(sessionId, resultValue.unauthenticatedSessionId);
-        assertEquals(key, resultValue.key);
-        assertEquals(mask, resultValue.mask);
-        assertEquals(salt, resultValue.salt);
+        assertEquals(sessionId, result.unauthenticatedSessionId);
+        assertEquals(key, result.key);
+        assertEquals(mask, result.mask);
+        assertEquals(salt, result.salt);
     }
 
     @Test
@@ -96,12 +89,10 @@ class ResponseHandlerTest {
                 BasicHeader[]{new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId + ";")});
 
         // when
-        Optional<AuthenticatedSession> result = testedService.extractAuthenticatedSession(authenticationResponse);
+        AuthenticatedSession result = testedService.extractAuthenticatedSession(authenticationResponse);
 
         // then
-        assertTrue(result.isPresent());
-        AuthenticatedSession resultValue = result.get();
-        assertEquals(sessionId, resultValue.authenticatedSessionId);
-        assertEquals(token, resultValue.token);
+        assertEquals(sessionId, result.authenticatedSessionId);
+        assertEquals(token, result.token);
     }
 }

@@ -1,6 +1,6 @@
 package scrapper.ing;
 
-import scrapper.ing.client.DownloadDataClient;
+import scrapper.ing.client.Connection;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.PasswordBehaviorHandler;
 import scrapper.ing.security.UnauthenticatedSession;
@@ -11,28 +11,28 @@ import java.util.List;
 public class PresentAccounts {
 
     private final ConsoleUserInterface userInterface;
-    private final DownloadDataClient downloadDataClient;
+    private final Connection connection;
 
-    public PresentAccounts(ConsoleUserInterface userInterface, DownloadDataClient downloadDataClient) {
+    public PresentAccounts(ConsoleUserInterface userInterface, Connection connection) {
         this.userInterface = userInterface;
-        this.downloadDataClient = downloadDataClient;
+        this.connection = connection;
     }
 
-    public void displayAccountDataWithUserInteraction() {
+    public void displayAccountsWithUserInteraction() {
         userInterface.displayWelcomeMessage();
 
         String login = userInterface.askUserForLogin();
 
-        UnauthenticatedSession unauthenticatedSession = downloadDataClient.createUnauthenticatedSession(login)
-                .orElseThrow(() -> new RuntimeException("Cannot connect with bank"));
+        UnauthenticatedSession unauthenticatedSession = connection.createUnauthenticatedSession(login);
 
         List<Integer> positionsOfRevealedCharacters = PasswordBehaviorHandler.extractPositionsOfRevealedCharacters
                 (unauthenticatedSession.mask);
+
         char[] password = userInterface.askUserForNeededPasswordCharacters(positionsOfRevealedCharacters);
 
-        AuthenticatedSession authenticatedSession = downloadDataClient.createAuthenticatedSession(login, password,
-                unauthenticatedSession).orElseThrow(() -> new RuntimeException("Invalid credentials"));
+        AuthenticatedSession authenticatedSession = connection.createAuthenticatedSession(login, password,
+                unauthenticatedSession);
 
-        userInterface.printAccounts(downloadDataClient.getAccountsInfo(authenticatedSession));
+        userInterface.printAccounts(connection.getAccountsInfo(authenticatedSession));
     }
 }

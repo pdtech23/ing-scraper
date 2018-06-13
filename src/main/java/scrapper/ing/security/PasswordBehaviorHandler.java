@@ -43,9 +43,9 @@ public class PasswordBehaviorHandler {
         return result.toString();
     }
 
-    static String createSaltWithMaskOn(UnauthenticatedSession metadata) {
-        String mask = metadata.mask;
-        String salt = metadata.salt;
+    static String createSaltWithMaskOn(UnauthenticatedSession unauthenticatedSession) {
+        String mask = unauthenticatedSession.mask;
+        String salt = unauthenticatedSession.salt;
 
         if (mask.length() > salt.length()) {
             return "";

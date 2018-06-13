@@ -9,94 +9,93 @@ import scrapper.account.Money;
 import scrapper.ing.security.AuthenticatedSession;
 import scrapper.ing.security.UnauthenticatedSession;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ResponseHandler {
 
-    private static final String TOKEN = "token";
     private static final String DATA_FIELD_KEY = "data";
-    private static final String SAV_FIELD_KEY = "sav";
-    private static final String CUR_FIELD_KEY = "cur";
-    private static final String ACCOUNT_KEY = "acct";
-    private static final String AVAILABLE_BALANCE_KEY = "avbal";
-    private static final String CURRENCY_KEY = "curr";
-    private static final String NAME_KEY = "name";
-    private static final String SALT = "salt";
-    private static final String MASK = "mask";
-    private static final String KEY = "key";
 
-    public Optional<UnauthenticatedSession> extractUnauthenticatedSession(Response response) {
+    public UnauthenticatedSession extractUnauthenticatedSession(Response response) {
+        String failureMessage = "Could not create session";
+        String salt = "salt";
+        String mask = "mask";
+        String key = "key";
         try {
             JSONObject jsonBody = response.jsonBody;
             if (!jsonBody.has(DATA_FIELD_KEY)) {
-                return Optional.empty();
+                throw new RuntimeException(failureMessage);
             }
             JSONObject data = response.jsonBody.getJSONObject(DATA_FIELD_KEY);
-            if (data.has(SALT) && data.has(MASK) && data.has(KEY)) {
-                return Optional.of(new UnauthenticatedSession(data.getString(SALT), data.getString(MASK), data
-                        .getString(KEY), extractSessionId(response)));
+            if (data.has(salt) && data.has(mask) && data.has(key)) {
+                return new UnauthenticatedSession(data.getString(salt), data.getString(mask), data.getString(key),
+                        extractSessionId(response));
             }
+            throw new RuntimeException(failureMessage);
         } catch (JSONException e) {
             e.printStackTrace();
+            throw new RuntimeException(failureMessage);
         }
-        return Optional.empty();
+    }
+
+    public AuthenticatedSession extractAuthenticatedSession(Response authenticationResponse) {
+        String token = extractSessionToken(authenticationResponse);
+        String sessionId = extractSessionId(authenticationResponse);
+
+        if (token.isEmpty() || sessionId.isEmpty()) {
+            throw new RuntimeException("Missing data for creation of authenticated session.");
+        }
+
+        return new AuthenticatedSession(token, sessionId);
+    }
+
+    private String extractSessionId(Response response) {
+        Header sessionHeader = Arrays.stream(response.headers).filter(header -> header.getName().equals("Set-Cookie")
+        ).filter(cookieHeader -> cookieHeader.getValue().contains("JSESSIONID")).findFirst().orElseThrow(() -> new
+                RuntimeException("Missing session data in response - incorrect password."));
+
+        String header = sessionHeader.getValue();
+        int i = header.indexOf('=') + 1;
+        int j = header.indexOf(';');
+        return header.substring(i, j);
     }
 
     private String extractSessionToken(Response response) {
+        String token = "token";
         try {
             JSONObject jsonBody = response.jsonBody;
             if (!jsonBody.has(DATA_FIELD_KEY)) {
                 return "";
             }
             JSONObject data = jsonBody.getJSONObject(DATA_FIELD_KEY);
-            if (data.has(TOKEN)) {
-                return data.getString(TOKEN);
+            if (data.has(token)) {
+                return data.getString(token);
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            throw new RuntimeException("Incorrect response content.");
         }
-        return "";
-    }
-
-    public Optional<AuthenticatedSession> extractAuthenticatedSession(Response authenticationResponse) {
-        String token = extractSessionToken(authenticationResponse);
-        String sessionId = extractSessionId(authenticationResponse);
-
-        if (token.isEmpty() || sessionId.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new AuthenticatedSession(token, sessionId));
-    }
-
-    private String extractSessionId(Response response) {
-        Optional<Header> sessionHeader = Arrays.stream(response.headers).filter(header -> header.getName().equals
-                ("Set-Cookie")).filter(cookieHeader -> cookieHeader.getValue().contains("JSESSIONID")).findFirst();
-
-        if (!sessionHeader.isPresent()) {
-            return "";
-        }
-
-        String header = sessionHeader.get().getValue();
-        int i = header.indexOf('=') + 1;
-        int j = header.indexOf(';');
-        return header.substring(i, j);
+        throw new RuntimeException("Missing session token in response.");
     }
 
     public List<Account> extractAccountsInfo(Response response) {
+        String failureMessage = "Could not extract accounts information";
+        String savingAccountsFieldKey = "sav";
+        String currentAccountsFieldKey = "cur";
         try {
             JSONObject jsonBody = response.jsonBody;
             if (!jsonBody.has(DATA_FIELD_KEY)) {
-                return Collections.emptyList();
+                throw new RuntimeException(failureMessage);
             }
 
             JSONObject accounts = jsonBody.getJSONObject(DATA_FIELD_KEY);
-            if (!accounts.has(SAV_FIELD_KEY) || !accounts.has(CUR_FIELD_KEY)) {
-                return Collections.emptyList();
+            if (!accounts.has(savingAccountsFieldKey) || !accounts.has(currentAccountsFieldKey)) {
+                throw new RuntimeException(failureMessage);
             }
 
-            JSONArray savingAccounts = accounts.getJSONArray(SAV_FIELD_KEY);
-            JSONArray currentAccounts = accounts.getJSONArray(CUR_FIELD_KEY);
+            JSONArray savingAccounts = accounts.getJSONArray(savingAccountsFieldKey);
+            JSONArray currentAccounts = accounts.getJSONArray(currentAccountsFieldKey);
 
             List<Account> result = new ArrayList<>();
             addAccounts(result, savingAccounts);
@@ -105,21 +104,23 @@ public class ResponseHandler {
             return result;
         } catch (JSONException e) {
             e.printStackTrace();
-            return Collections.emptyList();
+            throw new RuntimeException(failureMessage);
         }
     }
 
     private void addAccounts(List<Account> aggregator, JSONArray savingAccounts) throws JSONException {
+        String accountKey = "acct";
+        String availableBalanceKey = "avbal";
+        String currencyKey = "curr";
+        String nameKey = "name";
         for (int i = 0; i < savingAccounts.length(); i++) {
             JSONObject current = savingAccounts.getJSONObject(i);
-
-            if (current.has(ACCOUNT_KEY) && current.has(AVAILABLE_BALANCE_KEY) && current.has(CURRENCY_KEY) &&
-                    current.has(NAME_KEY)) {
-                Account account = new Account(current.getString(ACCOUNT_KEY), new Money(current.getString
-                        (AVAILABLE_BALANCE_KEY), current.getString(CURRENCY_KEY)), current.getString(NAME_KEY));
+            if (current.has(accountKey) && current.has(availableBalanceKey) && current.has(currencyKey) && current
+                    .has(nameKey)) {
+                Account account = new Account(current.getString(accountKey), new Money(current.getString
+                        (availableBalanceKey), current.getString(currencyKey)), current.getString(nameKey));
                 aggregator.add(account);
             }
-
         }
     }
 }

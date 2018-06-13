@@ -18,12 +18,10 @@ import scrapper.ing.security.UnauthenticatedSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class DownloadDataClient {
+public class Connection {
     private static final String ING_REST_ENDPOINT_URI = "https://login.ingbank.pl/mojeing/rest";
     private static final String CHECK_LOGIN_URI = ING_REST_ENDPOINT_URI + "/renchecklogin";
     private static final String GET_ALL_ACCOUNTS_URI = ING_REST_ENDPOINT_URI + "/rengetallaccounts";
@@ -31,25 +29,22 @@ public class DownloadDataClient {
 
     private ResponseHandler responseHandler;
 
-    public DownloadDataClient(ResponseHandler responseHandler) {
+    public Connection(ResponseHandler responseHandler) {
         this.responseHandler = responseHandler;
     }
 
-    public Optional<UnauthenticatedSession> createUnauthenticatedSession(String login) {
+    public UnauthenticatedSession createUnauthenticatedSession(String login) {
 
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\"},\"locale\":\"PL\"}";
         HttpPost httpPost = new HttpPost(CHECK_LOGIN_URI);
 
-        Optional<Response> response = executeJsonRequest(httpPost, json);
+        Response response = executeJsonRequest(httpPost, json);
 
-        if (response.isPresent()) {
-            return responseHandler.extractUnauthenticatedSession(response.get());
-        }
-        return Optional.empty();
+        return responseHandler.extractUnauthenticatedSession(response);
     }
 
-    public Optional<AuthenticatedSession> createAuthenticatedSession(String login, char[] password,
-                                                                     UnauthenticatedSession unauthenticatedSession) {
+    public AuthenticatedSession createAuthenticatedSession(String login, char[] password, UnauthenticatedSession
+            unauthenticatedSession) {
 
         String json = "{\"token\":\"\",\"trace\":\"\",\"data\":{\"login\":\"" + login + "\",\"pwdhash\":\"" +
                 PasswordBehaviorHandler.createPasswordHash(unauthenticatedSession, password) + "\",\"di\":\"T\"}," +
@@ -58,12 +53,9 @@ public class DownloadDataClient {
         HttpPost httpPost = new HttpPost(LOGIN_URI);
         httpPost.setHeader("Cookie", "JSESSIONID=" + unauthenticatedSession.unauthenticatedSessionId);
 
-        Optional<Response> responseResult = executeJsonRequest(httpPost, json);
+        Response responseResult = executeJsonRequest(httpPost, json);
 
-        if (responseResult.isPresent()) {
-            return responseHandler.extractAuthenticatedSession(responseResult.get());
-        }
-        return Optional.empty();
+        return responseHandler.extractAuthenticatedSession(responseResult);
     }
 
 
@@ -74,14 +66,9 @@ public class DownloadDataClient {
 
         httpPost.setHeader("Cookie", "JSESSIONID=" + authenticatedSession.authenticatedSessionId);
         String json = "{\"token\":\"" + authenticatedSession.token + "\",\"trace\":\"\",\"locale\":\"PL\"}";
-        Optional<Response> response = executeJsonRequest(httpPost, json);
+        Response response = executeJsonRequest(httpPost, json);
 
-        if (response.isPresent()) {
-            return responseHandler.extractAccountsInfo(response.get());
-        }
-
-        return Collections.emptyList();
-
+        return responseHandler.extractAccountsInfo(response);
     }
 
     private void setHeadersNecessaryToPretendBrowser(HttpPost httpPost) {
@@ -90,17 +77,17 @@ public class DownloadDataClient {
         httpPost.setHeader("X-Wolf-Protection", "0.7616067842109708");
     }
 
-    private Optional<Response> executeJsonRequest(HttpPost httpPost, String jsonBody) {
+    private Response executeJsonRequest(HttpPost httpPost, String jsonBody) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
 
             httpPost.setHeader("Content-type", "application/json");
             httpPost.setEntity(new StringEntity(jsonBody));
             CloseableHttpResponse response = client.execute(httpPost);
 
-            return Optional.of(new Response(extractResponseJson(response), response.getAllHeaders()));
+            return new Response(extractResponseJson(response), response.getAllHeaders());
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            return Optional.empty();
+            throw new RuntimeException("Could not execute request.");
         }
     }
 
