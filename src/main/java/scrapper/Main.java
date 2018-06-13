@@ -7,16 +7,16 @@ import scrapper.user.experience.ConsoleUserInterface;
 
 public class Main {
 
-    public static void main(String[] args) {
+  public static void main(String[] args) {
 
-        ConsoleUserInterface ui = new ConsoleUserInterface();
+    ConsoleUserInterface ui = new ConsoleUserInterface();
 
-        ResponseHandler extractor = new ResponseHandler();
-        Connection downloader = new Connection(extractor);
+    ResponseHandler extractor = new ResponseHandler();
+    Connection downloader = new Connection(extractor);
 
-        PresentAccounts scrapper = new PresentAccounts(ui, downloader);
+    PresentAccounts scrapper = new PresentAccounts(ui, downloader);
 
-        scrapper.displayAccountsWithUserInteraction();
-    }
+    scrapper.displayAccountsWithUserInteraction();
+  }
 
 }

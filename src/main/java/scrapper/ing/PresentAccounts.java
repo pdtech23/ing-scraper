@@ -10,29 +10,29 @@ import java.util.List;
 
 public class PresentAccounts {
 
-    private final ConsoleUserInterface userInterface;
-    private final Connection connection;
+  private final ConsoleUserInterface userInterface;
+  private final Connection connection;
 
-    public PresentAccounts(ConsoleUserInterface userInterface, Connection connection) {
-        this.userInterface = userInterface;
-        this.connection = connection;
-    }
+  public PresentAccounts(ConsoleUserInterface userInterface, Connection connection) {
+    this.userInterface = userInterface;
+    this.connection = connection;
+  }
 
-    public void displayAccountsWithUserInteraction() {
-        userInterface.displayWelcomeMessage();
+  public void displayAccountsWithUserInteraction() {
+    userInterface.displayWelcomeMessage();
 
-        String login = userInterface.askUserForLogin();
+    String login = userInterface.askUserForLogin();
 
-        UnauthenticatedSession unauthenticatedSession = connection.createUnauthenticatedSession(login);
+    UnauthenticatedSession unauthenticatedSession = connection.createUnauthenticatedSession(login);
 
-        List<Integer> positionsOfRevealedCharacters = PasswordBehaviorHandler.extractPositionsOfRevealedCharacters
-                (unauthenticatedSession.mask);
+    List<Integer> positionsOfRevealedCharacters = PasswordBehaviorHandler.extractPositionsOfRevealedCharacters
+        (unauthenticatedSession.mask);
 
-        char[] password = userInterface.askUserForNeededPasswordCharacters(positionsOfRevealedCharacters);
+    char[] password = userInterface.askUserForNeededPasswordCharacters(positionsOfRevealedCharacters);
 
-        AuthenticatedSession authenticatedSession = connection.createAuthenticatedSession(login, password,
-                unauthenticatedSession);
+    AuthenticatedSession authenticatedSession = connection.createAuthenticatedSession(login, password,
+        unauthenticatedSession);
 
-        userInterface.printAccounts(connection.getAccountsInfo(authenticatedSession));
-    }
+    userInterface.printAccounts(connection.getAccountsInfo(authenticatedSession));
+  }
 }
