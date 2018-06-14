@@ -46,8 +46,8 @@ public class IngScraper implements IIngScraper {
         "}," +
         LOCALE_PL +
         "}";
-    HttpPost httpPost = new HttpPost(CHECK_LOGIN_URI);
-    Response response = executeJsonRequest(httpPost, json);
+    HttpPost checkLoginRequest = new HttpPost(CHECK_LOGIN_URI);
+    Response response = executeJsonRequest(checkLoginRequest, json);
     return responseHandler.extractUnauthenticatedSession(response);
   }
 
@@ -64,9 +64,9 @@ public class IngScraper implements IIngScraper {
         "}," +
         LOCALE_PL +
         "}";
-    HttpPost httpPost = new HttpPost(LOGIN_URI);
-    setSessionId(httpPost, unauthenticatedSession.unauthenticatedSessionId);
-    Response response = executeJsonRequest(httpPost, json);
+    HttpPost loginRequest = new HttpPost(LOGIN_URI);
+    setSessionId(loginRequest, unauthenticatedSession.unauthenticatedSessionId);
+    Response response = executeJsonRequest(loginRequest, json);
     return responseHandler.extractAuthenticatedSession(response);
   }
 

@@ -11,7 +11,11 @@ import java.util.List;
 public class ConsoleUI implements IConsoleUI {
 
   private static final String PASSPHRASE_READING_FAILURE_MESSAGE = "Failed user password reading.";
-  private final BufferedReader userInputReader = new BufferedReader(new InputStreamReader(System.in));
+  private final BufferedReader userInputReader;
+
+  public ConsoleUI() {
+    userInputReader = new BufferedReader(new InputStreamReader(System.in));
+  }
 
   @Override
   public void displayWelcomeMessage() {
