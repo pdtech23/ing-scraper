@@ -7,9 +7,9 @@ import challange.ing.security.session.UnauthenticatedSession;
 import java.util.List;
 
 public interface IIngScraper {
-  UnauthenticatedSession createUnauthenticatedSession(String login);
+  UnauthenticatedSession fetchUnauthenticatedSession(String login);
 
-  AuthenticatedSession createAuthenticatedSession(String login, char[] password, UnauthenticatedSession
+  AuthenticatedSession fetchAuthenticatedSession(String login, char[] password, UnauthenticatedSession
       unauthenticatedSession);
 
   List<Account> fetchAccounts(AuthenticatedSession authenticatedSession);

@@ -15,7 +15,7 @@ class IngScraperTest {
     // given
     String login = "test";
     // when
-    testedService.createUnauthenticatedSession(login);
+    testedService.fetchUnauthenticatedSession(login);
     // then
     // no exception is thrown
   }
@@ -25,7 +25,7 @@ class IngScraperTest {
     // given
     String login = "";
     // when & then
-    Assertions.assertThrows(RuntimeException.class, () -> testedService.createUnauthenticatedSession(login));
+    Assertions.assertThrows(RuntimeException.class, () -> testedService.fetchUnauthenticatedSession(login));
   }
 
   @Test
@@ -35,8 +35,8 @@ class IngScraperTest {
     char[] password = "abcde".toCharArray();
     UnauthenticatedSession unauthenticatedSession = TestHelper.SAMPLE_UNAUTHENTICATED_SESSION;
     // when & then
-    Assertions.assertThrows(RuntimeException.class, () -> testedService.createAuthenticatedSession(login, password,
-        unauthenticatedSession));
+    Assertions.assertThrows(RuntimeException.class, () -> testedService.fetchAuthenticatedSession(login, password,
+                                                                                                  unauthenticatedSession));
   }
 
   // due to lack of test credentials can't implement it in a meaningful way

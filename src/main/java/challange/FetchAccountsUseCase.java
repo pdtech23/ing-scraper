@@ -30,9 +30,9 @@ public class FetchAccountsUseCase {
 
   private void login() {
     String login = ui.askUserForLogin();
-    UnauthenticatedSession unauthenticatedSession = scraper.createUnauthenticatedSession(login);
+    UnauthenticatedSession unauthenticatedSession = scraper.fetchUnauthenticatedSession(login);
     char[] password = ui.askUserForNeededPasswordChars(unauthenticatedSession.positionsOfRevealedCharacters);
-    authenticatedSession = scraper.createAuthenticatedSession(login, password, unauthenticatedSession);
+    authenticatedSession = scraper.fetchAuthenticatedSession(login, password, unauthenticatedSession);
   }
 
   private void scrapAccounts() {

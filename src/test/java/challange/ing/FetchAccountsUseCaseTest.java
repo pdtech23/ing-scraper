@@ -67,7 +67,7 @@ class FetchAccountsUseCaseTest {
 
   private void givenSuccessfulConnection() {
     new Expectations() {{
-      IIngScraper.createUnauthenticatedSession(anyString);
+      IIngScraper.fetchUnauthenticatedSession(anyString);
       result = TestHelper.SAMPLE_UNAUTHENTICATED_SESSION;
     }};
   }
@@ -81,7 +81,7 @@ class FetchAccountsUseCaseTest {
 
   private void givenPasswordAndLoginBeingCorrect() {
     new Expectations() {{
-      IIngScraper.createAuthenticatedSession(SAMPLE_LOGIN, SAMPLE_PASSWORD, TestHelper.SAMPLE_UNAUTHENTICATED_SESSION);
+      IIngScraper.fetchAuthenticatedSession(SAMPLE_LOGIN, SAMPLE_PASSWORD, TestHelper.SAMPLE_UNAUTHENTICATED_SESSION);
       result = SAMPLE_SESSION_DATA;
     }};
   }
