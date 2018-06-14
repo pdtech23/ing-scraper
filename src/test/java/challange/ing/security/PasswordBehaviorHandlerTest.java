@@ -39,15 +39,16 @@ class PasswordBehaviorHandlerTest {
   @Test
   void shouldPutMaskOnSalt() {
     // given
-    String sampleSalt = "Gj1Uit0gyxKitJlqguphPHqKFH3DEkJ7";
-    String sampleMask = "**+**+*+++++++++++++++++++++++++";
-    UnauthenticatedSession unauthenticatedSession = new UnauthenticatedSessionBuilder().withSalt(sampleSalt).withMask
-        (sampleMask).withKey("").withUnauthenticatedSessionId("")
+    UnauthenticatedSession unauthenticatedSession = new UnauthenticatedSessionBuilder()
+        .withSalt("Aj1Uit0gyxKitJl66uphPHqKFH3DEk33")
+        .withMask("**+**+*+++++++++++++++++++++++++")
+        .withKey("")
+        .withUnauthenticatedSessionId("")
         .create();
     // when
     String result = PasswordBehaviorHandler.createSaltWithMaskOn(unauthenticatedSession);
     // then
-    assertEquals("**1**t*gyxKitJlqguphPHqKFH3DEkJ7", result);
+    assertEquals("**1**t*gyxKitJl66uphPHqKFH3DEk33", result);
   }
 
   @Test
@@ -65,16 +66,17 @@ class PasswordBehaviorHandlerTest {
   @Test
   void shouldBeHashAsInJS() {
     // given
-    String sampleSalt = "tk0XpsU5dAShJjJ5BS6nOnymXfCBRuSj";
-    String sampleMask = "**++*++*+*++++++++++++++++++++++";
     String sampleKey = "75804255617903534713114162762950";
-    UnauthenticatedSession unauthenticatedSession = new UnauthenticatedSessionBuilder().withSalt(sampleSalt).withMask
-        (sampleMask).withKey(sampleKey).withUnauthenticatedSessionId("")
+    UnauthenticatedSession unauthenticatedSession = new UnauthenticatedSessionBuilder()
+        .withSalt("tk0XpsU5dAShJjJ5BS6nOnymXfCBRuSj")
+        .withMask("**++*++*+*++++++++++++++++++++++")
+        .withKey(sampleKey)
+        .withUnauthenticatedSessionId("")
         .create();
-    // when
     String maskOnSalt = PasswordBehaviorHandler.createSaltWithMaskOn(unauthenticatedSession);
     String mixOfSaltAndPassword = PasswordBehaviorHandler.mixSaltAndPassword(maskOnSalt, new char[]{'A', 'g', 'c',
         '#', '7'});
+    // when
     String pwdHash = HmacUtils.hmacSha1Hex(sampleKey, mixOfSaltAndPassword);
     // then
     assertEquals("54efff0ae5d07baae2e531635a12bb0785fb56c1", pwdHash);

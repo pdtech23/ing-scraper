@@ -33,7 +33,11 @@ class ResponseHandlerTest {
   @Test
   void shouldReturnEmptyInfoWhenUserHasNoAccounts() throws JSONException {
     // given
-    String jsonAsString = "{\"data\":{\"sav\":[],\"cur\":[]}}";
+    String jsonAsString = "{" +
+        "\"data\":{" +
+            "\"sav\":[]," +
+            "\"cur\":[]" +
+        "}}";
     Response response = new Response(new JSONObject(jsonAsString), new Header[]{});
     // when
     List<Account> result = testedService.extractAccounts(response);
@@ -44,8 +48,11 @@ class ResponseHandlerTest {
   @Test
   void shouldReturnCorrespondingAccountsInfo() throws JSONException {
     // given
-    String jsonAsString = "{\"data\":{\"sav\":[{\"acct\":\"1337\",\"avbal\":\"12.34\",\"name\":\"super acc\"," +
-        "\"curr\":\"PLN\"}],\"cur\":[]}}";
+    String jsonAsString = "{" +
+        "\"data\": {" +
+            "\"sav\":[{\"acct\":\"1337\",\"avbal\":\"12.34\",\"name\":\"super acc\",\"curr\":\"PLN\"}]," +
+            "\"cur\":[]" +
+        "}}";
     Response response = new Response(new JSONObject(jsonAsString), new Header[]{});
     Account expected = TestHelper.SAMPLE_ACCOUNT_INFO;
     // when
@@ -57,13 +64,18 @@ class ResponseHandlerTest {
   @Test
   void shouldReturnUnauthenticatedSessionOnCorrectResponse() throws JSONException {
     // given
-    String sessionId = "authenticatedSessionId";
-    String key = "1234";
-    String mask = "**++";
+    String sessionId = "AuthenticatedSessionId";
     String salt = "SALT";
-    Response authenticationResponse = new Response(new JSONObject("{\"data\":{\"salt\":" + salt + "," + "\"mask\":" +
-        mask + ",\"key\":" + key + "}}"), new BasicHeader[]{new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId +
-        ";")});
+    String mask = "**++";
+    String key = "1234";
+    String jsonAsString = "{" +
+        "\"data\":{" +
+            "\"salt\":" + salt + "," +
+            "\"mask\":" + mask + "," +
+            "\"key\":" + key +
+        "}}";
+    BasicHeader[] headers = {new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId + ";")};
+    Response authenticationResponse = new Response(new JSONObject(jsonAsString), headers);
     // when
     UnauthenticatedSession result = testedService.extractUnauthenticatedSession(authenticationResponse);
     // then
@@ -78,8 +90,12 @@ class ResponseHandlerTest {
     // given
     String sessionId = "authenticatedSessionId";
     String token = "token";
-    Response authenticationResponse = new Response(new JSONObject("{\"data\":{\"token\":" + token + "}}"), new
-        BasicHeader[]{new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId + ";")});
+    String jsonAsString = "{" +
+        "\"data\":{" +
+            "\"token\":" + token +
+        "}}";
+    BasicHeader[] headers = {new BasicHeader("Set-Cookie", "JSESSIONID=" + sessionId + ";")};
+    Response authenticationResponse = new Response(new JSONObject(jsonAsString), headers);
     // when
     AuthenticatedSession result = testedService.extractAuthenticatedSession(authenticationResponse);
     // then
