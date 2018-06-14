@@ -8,7 +8,7 @@
     <artifactId>simple-ing-scrapper</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>simple-ing-scraper</name>
+    <name>simple-ing-challange</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

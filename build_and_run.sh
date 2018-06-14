@@ -2,4 +2,4 @@
 
 mvn clean package
 
-mvn exec:java -D exec.mainClass=scraper.Main
+mvn exec:java -D exec.mainClass=challange.Main
