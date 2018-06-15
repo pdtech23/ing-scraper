@@ -1,6 +1,6 @@
 package challange.user.experience;
 
-import challange.account.Account;
+import challange.model.Account;
 
 import java.io.BufferedReader;
 import java.io.IOException;

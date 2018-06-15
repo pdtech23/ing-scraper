@@ -1,9 +1,9 @@
 package challange;
 
-import challange.account.Account;
-import challange.ing.scraper.Scraper;
-import challange.ing.session.AuthenticatedSession;
-import challange.ing.session.UnauthenticatedSession;
+import challange.model.Account;
+import challange.scraper.Scraper;
+import challange.scraper.ing.session.authenticated.AuthenticatedSession;
+import challange.scraper.ing.session.unauthenticated.UnauthenticatedSession;
 import challange.user.experience.UI;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package challange;
 
-import challange.ing.scraper.Scraper;
-import challange.ing.scraper.IngScraper;
+import challange.scraper.Scraper;
+import challange.scraper.ing.IngScraper;
 import challange.user.experience.ConsoleUI;
 import challange.user.experience.UI;
 
