@@ -1,4 +1,4 @@
-package challange.ing.security.session;
+package challange.ing.session;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ public class UnauthenticatedSession {
   public final String unauthenticatedSessionId;
   public final List<Integer> positionsOfRevealedCharacters;
 
-  public UnauthenticatedSession(String salt, String mask, String key, String unauthenticatedSessionId, List<Integer>
-      positionsOfRevealedCharacters) {
+  UnauthenticatedSession(String salt, String mask, String key, String unauthenticatedSessionId,
+                                List<Integer> positionsOfRevealedCharacters) {
     this.salt = salt;
     this.mask = mask;
     this.key = key;

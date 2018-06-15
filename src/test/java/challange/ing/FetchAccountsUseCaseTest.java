@@ -2,9 +2,8 @@ package challange.ing;
 
 import challange.FetchAccountsUseCase;
 import challange.account.Account;
-import challange.ing.scraper.IIngScraper;
-import challange.ing.security.session.AuthenticatedSession;
-import challange.user.experience.IConsoleUI;
+import challange.ing.scraper.Scraper;
+import challange.user.experience.UI;
 import mockit.Expectations;
 import mockit.Mocked;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,22 +16,20 @@ import java.util.List;
 class FetchAccountsUseCaseTest {
 
   private static final char[] SAMPLE_PASSWORD = {'a', 'b', 'c', 'd', 'e'};
-  private static final List<Account> SAMPLE_ACCOUNTS_LIST = Arrays.asList(TestHelper.SAMPLE_ACCOUNT_INFO, TestHelper
-      .SAMPLE_ACCOUNT_INFO);
+  private static final List<Account> SAMPLE_ACCOUNTS_LIST = Arrays.asList(TestHelper.SAMPLE_ACCOUNT_INFO, TestHelper.SAMPLE_ACCOUNT_INFO);
   private static final String SAMPLE_LOGIN = "janusz";
-  private static final AuthenticatedSession SAMPLE_SESSION_DATA = new AuthenticatedSession("token", "authenticatedSessionId");
   private static final List<Integer> SAMPLE_CHARACTERS_POSITIONS = Arrays.asList(1, 2, 3, 4, 5);
 
   private FetchAccountsUseCase testedService;
 
   @Mocked
-  private IConsoleUI userInterface;
+  private UI userInterface;
   @Mocked
-  private IIngScraper IIngScraper;
+  private Scraper Scraper;
 
   @BeforeEach
   void setUp() {
-    testedService = new FetchAccountsUseCase(userInterface, IIngScraper);
+    testedService = new FetchAccountsUseCase(userInterface, Scraper);
   }
 
   @Test
@@ -51,9 +48,9 @@ class FetchAccountsUseCaseTest {
 
   private void givenUserHavingAccounts() {
     new Expectations() {{
-      IIngScraper.fetchAccounts(SAMPLE_SESSION_DATA);
+      Scraper.fetchAccounts(TestHelper.SAMPLE_AUTHENTICATED_SESSION);
       result = SAMPLE_ACCOUNTS_LIST;
-      userInterface.printAccounts(SAMPLE_ACCOUNTS_LIST);
+      userInterface.displayAccounts(SAMPLE_ACCOUNTS_LIST);
     }};
   }
 
@@ -67,7 +64,7 @@ class FetchAccountsUseCaseTest {
 
   private void givenSuccessfulConnection() {
     new Expectations() {{
-      IIngScraper.fetchUnauthenticatedSession(anyString);
+      Scraper.fetchUnauthenticatedSession(anyString);
       result = TestHelper.SAMPLE_UNAUTHENTICATED_SESSION;
     }};
   }
@@ -81,8 +78,8 @@ class FetchAccountsUseCaseTest {
 
   private void givenPasswordAndLoginBeingCorrect() {
     new Expectations() {{
-      IIngScraper.fetchAuthenticatedSession(SAMPLE_LOGIN, SAMPLE_PASSWORD, TestHelper.SAMPLE_UNAUTHENTICATED_SESSION);
-      result = SAMPLE_SESSION_DATA;
+      Scraper.fetchAuthenticatedSession(SAMPLE_LOGIN, SAMPLE_PASSWORD, TestHelper.SAMPLE_UNAUTHENTICATED_SESSION);
+      result = TestHelper.SAMPLE_AUTHENTICATED_SESSION;
     }};
   }
 }

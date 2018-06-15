@@ -2,17 +2,20 @@ package challange.account;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MoneyTest {
 
   @Test
   void shouldGenerateProperString() {
     // given
-    Money money = new Money("12.3456", "ZIMBABWE DOLLARS $$$");
+    String amountMajor = "12";
+    String amountMinor = "345";
+    String currency = "ZIMBABWE DOLLARS $$$";
+    Money money = new Money(amountMajor + "." + amountMinor, currency);
     // when
     String result = money.toString();
     // then
-    assertEquals("12.3456 ZIMBABWE DOLLARS $$$", result);
+    assertTrue(result.contains(amountMajor) && result.contains(amountMinor) && result.contains(currency));
   }
 }

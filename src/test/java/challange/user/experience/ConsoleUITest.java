@@ -19,7 +19,7 @@ class ConsoleUITest {
   @Mocked
   private BufferedReader inputReaderMock;
 
-  private IConsoleUI testedUserInterface = new ConsoleUI();
+  private UI testedUI = new ConsoleUI();
 
   @Test
   void shouldBeAbleToReadUsersLogin() throws IOException {
@@ -29,7 +29,7 @@ class ConsoleUITest {
       result = "janusz";
     }};
     // when
-    String result = testedUserInterface.askUserForLogin();
+    String result = testedUI.askUserForLogin();
     // then
     assertEquals("janusz", result);
   }
@@ -38,21 +38,32 @@ class ConsoleUITest {
   void shouldBeAbleToReadUsersPassword() throws IOException {
     // given
     ArrayList<Integer> positionsOfRevealedCharacters = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+    givenPasswordByUser();
+    // when
+    char[] result = testedUI.askUserForNeededPasswordChars(positionsOfRevealedCharacters);
+    // then
+    assertTrue(Arrays.equals("jjjjj".toCharArray(), result));
+  }
+
+  private void givenPasswordByUser() throws IOException {
     new Expectations() {{
       inputReaderMock.readLine();
       result = "j\n";
       times = 5;
     }};
-    // when
-    char[] result = testedUserInterface.askUserForNeededPasswordChars(positionsOfRevealedCharacters);
-    // then
-    assertTrue(Arrays.equals("jjjjj".toCharArray(), result));
   }
 
   @Test
   void shouldBreakOnIncompletePassword() throws IOException {
     // given
     ArrayList<Integer> positionsOfRevealedCharacters = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+    givenIncompletePasswordByUser();
+    // when & then
+    Assertions.assertThrows(RuntimeException.class, () -> testedUI.askUserForNeededPasswordChars
+        (positionsOfRevealedCharacters));
+  }
+
+  private void givenIncompletePasswordByUser() throws IOException {
     new Expectations() {{
       inputReaderMock.readLine();
       result = "j";
@@ -60,8 +71,5 @@ class ConsoleUITest {
       inputReaderMock.readLine();
       result = "";
     }};
-    // when & then
-    Assertions.assertThrows(RuntimeException.class, () -> testedUserInterface.askUserForNeededPasswordChars
-        (positionsOfRevealedCharacters));
   }
 }

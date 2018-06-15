@@ -1,6 +1,6 @@
-package challange.ing.security;
+package challange.ing.credentials;
 
-import challange.ing.security.session.UnauthenticatedSession;
+import challange.ing.session.UnauthenticatedSession;
 import org.apache.commons.codec.digest.HmacUtils;
 
 import java.util.ArrayList;
@@ -16,39 +16,35 @@ public class PasswordBehaviorHandler {
   public static List<Integer> extractPositionsOfRevealedCharacters(String mask) {
     char[] maskChars = mask.toCharArray();
     List<Integer> result = new ArrayList<>();
-    for (int i = 0; i < maskChars.length; ++i) {
+    for (int i = 0; i < maskChars.length; ++i)
       if (maskChars[i] == MARKER)
         result.add(i + 1);
-    }
     return result;
   }
 
   public static String createPasswordHash(UnauthenticatedSession unauthenticatedSession, char[] password) {
-    String saltWithPassword = PasswordBehaviorHandler.mixSaltAndPassword(PasswordBehaviorHandler.createSaltWithMaskOn
-        (unauthenticatedSession), password);
+    String saltWithPassword = PasswordBehaviorHandler.mixSaltAndPassword(PasswordBehaviorHandler.createSaltWithMaskOn(unauthenticatedSession), password);
     return HmacUtils.hmacSha1Hex(unauthenticatedSession.key, saltWithPassword);
   }
 
   static String mixSaltAndPassword(String saltWithMask, char[] passphrase) {
-    StringBuilder result = new StringBuilder();
-    int currentCharacterIndex = 0;
-    for (int i = 0; i < saltWithMask.length(); ++i) {
+    String result = "";
+    int currCharNum = 0;
+    for (int i = 0; i < saltWithMask.length(); ++i)
       if (saltWithMask.charAt(i) == MARKER)
-        result.append(passphrase[currentCharacterIndex++]);
+        result += passphrase[currCharNum++];
       else
-        result.append(saltWithMask.charAt(i));
-    }
-    return result.toString();
+        result += saltWithMask.charAt(i);
+    return result;
   }
 
   static String createSaltWithMaskOn(UnauthenticatedSession unauthenticatedSession) {
     StringBuilder result = new StringBuilder();
-    for (int i = 0; i < unauthenticatedSession.mask.length(); i++) {
+    for (int i = 0; i < unauthenticatedSession.mask.length(); i++)
       if (unauthenticatedSession.mask.charAt(i) == MARKER)
         result.append(MARKER);
       else
         result.append(unauthenticatedSession.salt.charAt(i));
-    }
     return result.toString();
   }
 }

@@ -1,4 +1,4 @@
-package challange.ing.security.session.exception;
+package challange.ing.credentials.exception;
 
 import org.json.JSONException;
 

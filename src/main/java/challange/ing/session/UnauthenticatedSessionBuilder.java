@@ -1,6 +1,6 @@
-package challange.ing.security.session;
+package challange.ing.session;
 
-import challange.ing.security.PasswordBehaviorHandler;
+import challange.ing.credentials.PasswordBehaviorHandler;
 
 import java.util.List;
 

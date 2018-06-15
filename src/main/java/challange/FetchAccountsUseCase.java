@@ -1,22 +1,22 @@
 package challange;
 
 import challange.account.Account;
-import challange.ing.scraper.IIngScraper;
-import challange.ing.security.session.AuthenticatedSession;
-import challange.ing.security.session.UnauthenticatedSession;
-import challange.user.experience.IConsoleUI;
+import challange.ing.scraper.Scraper;
+import challange.ing.session.AuthenticatedSession;
+import challange.ing.session.UnauthenticatedSession;
+import challange.user.experience.UI;
 
 import java.util.List;
 
 public class FetchAccountsUseCase {
 
-  private final IConsoleUI ui;
-  private final IIngScraper scraper;
+  private final UI ui;
+  private final Scraper scraper;
 
   private List<Account> accounts;
   private AuthenticatedSession authenticatedSession;
 
-  public FetchAccountsUseCase(IConsoleUI ui, IIngScraper scraper) {
+  public FetchAccountsUseCase(UI ui, Scraper scraper) {
     this.ui = ui;
     this.scraper = scraper;
   }
@@ -25,7 +25,7 @@ public class FetchAccountsUseCase {
     ui.displayWelcomeMessage();
     login();
     scrapAccounts();
-    ui.printAccounts(accounts);
+    ui.displayAccounts(accounts);
   }
 
   private void login() {

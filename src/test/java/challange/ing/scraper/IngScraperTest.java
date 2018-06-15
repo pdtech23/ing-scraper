@@ -1,14 +1,14 @@
 package challange.ing.scraper;
 
 import challange.ing.TestHelper;
-import challange.ing.security.session.AuthenticatedSession;
-import challange.ing.security.session.UnauthenticatedSession;
+import challange.ing.session.AuthenticatedSession;
+import challange.ing.session.UnauthenticatedSession;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class IngScraperTest {
 
-  private final IIngScraper testedService = new IngScraper();
+  private final Scraper testedService = new IngScraper();
 
   @Test
   void shouldProceedOnAnyNonEmptyLogin() {
@@ -46,7 +46,7 @@ class IngScraperTest {
   @Test
   void shouldFailWithoutAuthentication() {
     // given
-    AuthenticatedSession authenticatedSession = new AuthenticatedSession("123", "abc");
+    AuthenticatedSession authenticatedSession = TestHelper.SAMPLE_AUTHENTICATED_SESSION;
     // when & then
     Assertions.assertThrows(RuntimeException.class, () -> testedService.fetchAccounts(authenticatedSession));
   }

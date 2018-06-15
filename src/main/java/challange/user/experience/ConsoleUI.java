@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.util.List;
 
-public class ConsoleUI implements IConsoleUI {
+public class ConsoleUI implements UI {
 
   private static final String PASSPHRASE_READING_FAILURE_MESSAGE = "Failed user password reading.";
   private final BufferedReader userInputReader;
@@ -53,7 +53,7 @@ public class ConsoleUI implements IConsoleUI {
   }
 
   @Override
-  public void printAccounts(List<Account> accounts) {
+  public void displayAccounts(List<Account> accounts) {
     System.out.println("Your accounts:");
     accounts.forEach(System.out::println);
   }

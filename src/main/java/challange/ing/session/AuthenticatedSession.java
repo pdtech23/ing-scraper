@@ -1,4 +1,4 @@
-package challange.ing.security.session;
+package challange.ing.session;
 
 public class AuthenticatedSession {
 
