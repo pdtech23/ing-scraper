@@ -1,4 +1,4 @@
-# ing-scrapper
+# ing-scraper
 Simple ING bank account information retriver
 
 Reverse engeneering Bank API and doing what would browser do but in Java!
